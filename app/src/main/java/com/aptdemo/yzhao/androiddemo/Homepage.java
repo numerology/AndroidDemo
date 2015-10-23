@@ -371,7 +371,7 @@ public class Homepage extends ActionBarActivity implements
     }
 
     public void viewNearStreams(View view){
-        Intent intent= new Intent(this, DisplayImages.class);
+        Intent intent= new Intent(this, ViewNearby.class);
         startActivity(intent);
     }
 
