@@ -8,6 +8,7 @@
     <string name="uploadImage">Upload Image</string>
     <string name="upload_hint">Stream Name</string>
     <string name="choose_from_library">Choose From Library</string>
+    <string name="take_photo">Take a Picture</string>
     <string name="title_activity_display_images">DisplayImages</string>
     <string name="imagePage">View All Images</string>
     <string name="streamListPage">View All Streams</string>

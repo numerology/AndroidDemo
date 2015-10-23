@@ -42,6 +42,8 @@ import java.io.ByteArrayOutputStream;
 
 public class ImageUpload extends ActionBarActivity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener{
     private static final int PICK_IMAGE = 1;
+    private static final int TAKE_PHOTO = 2;
+
     Context context = this;
     private LocationClient currentLocation;
     String streamName;
@@ -59,6 +61,7 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
         }
         // Choose image from library
         Button chooseFromLibraryButton = (Button) findViewById(R.id.choose_from_library);
+        Button takePhotoBtn = (Button) findViewById(R.id.take_photo);
         chooseFromLibraryButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -70,6 +73,19 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
                         // Start the Intent
                         startActivityForResult(galleryIntent, PICK_IMAGE);
                     }
+                }
+        );
+
+        takePhotoBtn.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        if (takePictureIntent.resolveActivity(getPackageManager())!=null){
+                            startActivityForResult(takePictureIntent, TAKE_PHOTO);
+                        }
+                    }
+
                 }
         );
 
@@ -207,6 +223,37 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
                         }
                     }
             );
+        }
+        else if(requestCode == TAKE_PHOTO && resultCode == RESULT_OK){
+            Bundle extras = data.getExtras();
+            ImageView imgView = (ImageView) findViewById(R.id.thumbnail);
+            final Bitmap bitmapImage = (Bitmap) extras.get("data");
+            imgView.setImageBitmap(bitmapImage);
+            Button uploadButton = (Button) findViewById(R.id.upload_to_server);
+            uploadButton.setClickable(true);
+            uploadButton.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            // Get photo caption
+
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+                            byte[] b = baos.toByteArray();
+                            byte[] encodedImage = Base64.encode(b, Base64.DEFAULT);
+                            String encodedImageStr = encodedImage.toString();
+
+                            if (currentLocation == null)
+                                System.out.println("Location Client Invalid");
+
+                            String location = currentLocation.getLastLocation().getLatitude() + "," + currentLocation.getLastLocation().getLongitude();
+                            System.out.println(location);
+                            getUploadURL(b, streamName, location);
+                        }
+                    }
+            );
+
         }
     }
 

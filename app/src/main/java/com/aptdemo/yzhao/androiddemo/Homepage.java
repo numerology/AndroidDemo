@@ -80,6 +80,10 @@ public class Homepage extends ActionBarActivity implements
     private SignInButton mSignInButton;
     private Button mSignOutButton;
     private Button mRevokeButton;
+
+    private Button mAllStreamBtn;
+    private Button mNearbyStreamBtn;
+    private Button mSearchBtn;
     private TextView mStatus;
 
     Context context = this;
@@ -92,6 +96,10 @@ public class Homepage extends ActionBarActivity implements
         mSignOutButton = (Button) findViewById(R.id.sign_out_button);
         mRevokeButton = (Button) findViewById(R.id.revoke_access_button);
         mStatus = (TextView) findViewById(R.id.sign_in_status);
+
+        mAllStreamBtn = (Button) findViewById(R.id.view_all_streams);
+        mNearbyStreamBtn = (Button) findViewById(R.id.view_nearby_streams);
+        mSearchBtn = (Button) findViewById(R.id.search_btn);
 
         setGooglePlusButtonText(mSignInButton, "Sign in          ");
 
@@ -227,6 +235,10 @@ public class Homepage extends ActionBarActivity implements
         mSignOutButton.setEnabled(true);
         mRevokeButton.setEnabled(true);
 
+        mAllStreamBtn.setEnabled(true);
+        mNearbyStreamBtn.setEnabled(true);
+        mSearchBtn.setEnabled(true);
+
         // Retrieve some profile information to personalize our app for the user.
         final Person currentUser = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
         email = Plus.AccountApi.getAccountName(mGoogleApiClient);
@@ -342,6 +354,10 @@ public class Homepage extends ActionBarActivity implements
         mSignInButton.setEnabled(true);
         mSignOutButton.setEnabled(false);
         mRevokeButton.setEnabled(false);
+
+        mAllStreamBtn.setEnabled(false);
+        mNearbyStreamBtn.setEnabled(false);
+        mSearchBtn.setEnabled(false);
 
         mStatus.setText("Signed out");
 

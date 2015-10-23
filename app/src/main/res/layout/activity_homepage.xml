@@ -59,19 +59,12 @@
             />
 
         <Button
-            android:id="@+id/view_all_images"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/imagePage"
-            android:onClick="viewAllImages"
-            />
-
-        <Button
             android:id="@+id/view_all_streams"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/streamPage"
             android:onClick="viewAllStreams"
+            android:enabled="false"
             />
 
         <Button
@@ -80,6 +73,7 @@
             android:layout_height="wrap_content"
             android:text="@string/nearbyPage"
             android:onClick="viewNearStreams"
+            android:enabled="false"
             />
 
         <Button
@@ -88,6 +82,7 @@
             android:layout_height="wrap_content"
             android:text="@string/searchPage"
             android:onClick="Search"
+            android:enabled="false"
             />
 
 
