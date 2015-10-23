@@ -10,6 +10,7 @@
     <string name="choose_from_library">Choose From Library</string>
     <string name="title_activity_display_images">DisplayImages</string>
     <string name="imagePage">View All Images</string>
+    <string name="streamListPage">View All Streams</string>
     <string name="streamPage">View All Streams</string>
     <string name="nearbyPage">View Nearby Streams</string>
     <string name="searchPage">Search Streams</string>
@@ -39,6 +40,8 @@
     <string name="mock_server_has_token">Mock server has refresh token?</string>
     <string name="request_server_auth_code">Request server auth code?</string>
     <string name="configuration_error">Error: the value of WEB_CLIENT_ID or SERVER_BASE_URL is not  set correctly. This will cause errors when requesting a server auth code.</string>
+    <string name="title_activity_list_streams">ListStreams</string>
+    <string name="title_activity_view_stream">ViewStreamActivity</string>
 
 
 </resources>

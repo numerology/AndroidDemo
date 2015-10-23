@@ -377,4 +377,14 @@ public class Homepage extends ActionBarActivity implements
         startActivity(intent);
     }
 
+    public void viewAllStreams(View view){
+        Intent intent= new Intent(this, ListStreams.class);
+        startActivity(intent);
+    }
+
+    public void viewNearStreams(View view){
+        Intent intent= new Intent(this, DisplayImages.class);
+        startActivity(intent);
+    }
+
 }
