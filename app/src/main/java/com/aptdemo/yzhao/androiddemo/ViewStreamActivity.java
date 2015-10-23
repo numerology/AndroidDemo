@@ -28,7 +28,7 @@ import java.util.ArrayList;
 public class ViewStreamActivity extends ActionBarActivity {
     private String TAG = "View Stream";
     Context context = this;
-
+    String streamName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +43,7 @@ public class ViewStreamActivity extends ActionBarActivity {
         httpClient.get(request_url, params, new AsyncHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response){
-                final String streamName;
+
                 final ArrayList<String> imageURLs = new ArrayList<String>();
                 try{
                     JSONObject jObject = new JSONObject(new String(response));
@@ -87,6 +87,12 @@ public class ViewStreamActivity extends ActionBarActivity {
 
         });
 
+    }
+
+    public void uploadImage(View view){
+        Intent intent= new Intent(this, ImageUpload.class);
+        intent.putExtra("stream_name", streamName);
+        startActivity(intent);
     }
 
 }

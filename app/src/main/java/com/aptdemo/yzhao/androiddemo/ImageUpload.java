@@ -44,9 +44,13 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
     private static final int PICK_IMAGE = 1;
     Context context = this;
     private LocationClient currentLocation;
-
+    String streamName;
+    private Intent currentIntent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        currentIntent = getIntent();
+
+        streamName = currentIntent.getStringExtra("stream_name");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_upload);
         if (servicesConnected()) {
@@ -98,8 +102,8 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
         //String location=mLocationClient.getLastLocation().getLatitude()+"_"+mLocationClient.getLastLocation().getLongitude();
         //System.out.println(location);
 
-        String streamName = getIntent().getStringExtra("streamName");
-        String streamID = getIntent().getStringExtra("streamID");
+    //    String streamName = getIntent().getStringExtra("streamName");
+    //    String streamID = getIntent().getStringExtra("streamID");
         //TextView responseText = (TextView) this.findViewById(R.id.stream_name_upload);
         //responseText.setText(streamName);
 
@@ -188,9 +192,6 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
 
                             // Get photo caption
 
-                            EditText text = (EditText) findViewById(R.id.stream_name);
-                            String streamName = text.getText().toString();
-
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             bitmapImage.compress(Bitmap.CompressFormat.JPEG, 50, baos);
                             byte[] b = baos.toByteArray();
@@ -250,6 +251,7 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 Log.w("async", "success!!!!");
                 Toast.makeText(context, "Upload Successful", Toast.LENGTH_SHORT).show();
+                finish();
             }
 
             @Override
