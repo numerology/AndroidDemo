@@ -376,5 +376,9 @@ public class Homepage extends ActionBarActivity implements
         Intent intent= new Intent(this, DisplayImages.class);
         startActivity(intent);
     }
+    public void searchStreams(View view){
+        Intent intent = new Intent(this, SearchStream.class);
+        startActivity(intent);
+    }
 
 }

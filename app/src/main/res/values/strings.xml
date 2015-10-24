@@ -39,6 +39,16 @@
     <string name="mock_server_has_token">Mock server has refresh token?</string>
     <string name="request_server_auth_code">Request server auth code?</string>
     <string name="configuration_error">Error: the value of WEB_CLIENT_ID or SERVER_BASE_URL is not  set correctly. This will cause errors when requesting a server auth code.</string>
+    <string name="title_activity_search_stream">SearchStream</string>
 
+    <!--Strings for search stream page-->
+    <string name="search_hint">Keywords</string>
+    <string name="search_btn">Search</string>
+    <string name="search_info">Type in keywords and search for stream</string>
+    <string name="pre_results">pre results</string>
+    <string name="post_results"> more results</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

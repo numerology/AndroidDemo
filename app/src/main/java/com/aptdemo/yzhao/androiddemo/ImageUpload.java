@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -44,6 +45,7 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
     private static final int PICK_IMAGE = 1;
     Context context = this;
     private LocationClient currentLocation;
+    private AutoCompleteTextView streamAutoCompleteTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,10 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
             System.out.println("servicesConnected");
             currentLocation = new LocationClient(this, this, this);
         }
+        streamAutoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.stream_name);
+        AutocompleteAdapter mAdapter = new AutocompleteAdapter(this, android.R.layout.simple_dropdown_item_1line);
+        mAdapter.setAutocompleteAPIType(Consts.AutocompleteType.STREAM_NAME);
+        streamAutoCompleteTextView.setAdapter(mAdapter);
         // Choose image from library
         Button chooseFromLibraryButton = (Button) findViewById(R.id.choose_from_library);
         chooseFromLibraryButton.setOnClickListener(
@@ -121,7 +127,6 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
         super.onStart();
         // Connect the client.
         currentLocation.connect();
-
     }
 
     /*
