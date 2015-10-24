@@ -18,7 +18,10 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 
+import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,9 +44,9 @@ public class SearchStream extends ActionBarActivity {//implements
     private TextView mTextView;
     private GridView mGridView;
 
-    private ArrayList<String> streamNames = new ArrayList<String>();
-    private ArrayList<String> coverUrls = new ArrayList<String>();
-    private ArrayList<String> streamIds = new ArrayList<String>();
+    final private ArrayList<String> streamNames = new ArrayList<String>();
+    final private ArrayList<String> coverUrls = new ArrayList<String>();
+    final private ArrayList<String> streamIds = new ArrayList<String>();
     private int numResult = 0;
     Context context = this;
     @Override
@@ -64,71 +67,60 @@ public class SearchStream extends ActionBarActivity {//implements
                 Toast.makeText(context, "Keyword empty!", Toast.LENGTH_SHORT).show();
                 return;
             }
-            ArrayList<String> resultList =  new ArrayList<String>();
-            HttpURLConnection conn = null;
             StringBuilder responseJsonString = new StringBuilder();
-            try{
-                StringBuilder sb = new StringBuilder(Consts.API_SEARCH_STREAM_URL);
-                sb.append("?keywords=" + URLEncoder.encode(mAutoCompleteTextView.getText().toString(), "utf8"));
-                URL url = new URL(sb.toString());
-                Log.w(TAG, "autocomplete url" + sb.toString());
-                conn = (HttpURLConnection) url.openConnection();
-                InputStreamReader in = new InputStreamReader(conn.getInputStream());
+            AsyncHttpClient httpClient = new AsyncHttpClient();
 
-                int read;
-                char[] buff = new char[1024];
-                while ((read = in.read(buff)) != -1){
-                    responseJsonString.append(buff, 0, read);
-                }
-                Log.w(TAG,"response: "+responseJsonString.toString());
-                try{
-                    JSONObject jObject = new JSONObject(responseJsonString.toString());
-                    JSONArray jsonStreamNames = jObject.getJSONArray("StreamNames");
-                    JSONArray jsonCoverUrls = jObject.getJSONArray("CoverUrls");
-                    JSONArray jsonStreamIds = jObject.getJSONArray("StreamIds");
-                    if(jsonStreamNames.length()>0){
-                        streamNames = new ArrayList<String>(jsonStreamNames.length());
-                        coverUrls = new ArrayList<String>(jsonStreamNames.length());
-                        for (int i = 0; i < jsonStreamNames.length(); i++){
-                            streamNames.set(i, jsonStreamNames.get(i).toString());
-                            coverUrls.set(i,jsonCoverUrls.get(i).toString());
-                            streamIds.set(i, jsonStreamIds.get(i).toString());
-                        }
-                    }else {
-                        streamNames = new ArrayList<String>();
-                        coverUrls = new ArrayList<String>();
-                    }
-                    // Handle return results and show messages/gridviews
-                    if (streamNames.isEmpty()){
+            try {
+                StringBuilder sb = new StringBuilder(Consts.API_SEARCH_STREAM_URL);
+                sb.append("?search_keywords=" + URLEncoder.encode(mAutoCompleteTextView.getText().toString(), "utf8"));
+                Log.w(TAG, "search stream url: " + sb.toString());
+                httpClient.get(sb.toString(), new AsyncHttpResponseHandler() {
+
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        streamNames.clear();
+                        coverUrls.clear();
+                        streamIds.clear();
                         numResult = 0;
-                    }else{
-                        numResult = streamNames.size();
-                    }
-                    StringBuilder searchInfoSb = new StringBuilder();
-                    searchInfoSb.append(Integer.toString(numResult) + " results found for");
-                    searchInfoSb.append(mAutoCompleteTextView.getText().toString());
-                    mTextView.setText(searchInfoSb.toString());
-                    mGridView.setAdapter(new ImageAdapter(context, coverUrls)); // TODO: set new adapter or change the data of the original adapter ? notifyDataSetChanged()?
-                    mGridView.invalidateViews();
-                    mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            Intent intentViewStream = new Intent(context, ViewStreamActivity.class);
-                            intentViewStream.putExtra("stream_id", streamIds.get(position));
-                            startActivity(intentViewStream);
+                        try {
+                            JSONObject jObject = new JSONObject(new String(responseBody));
+                            JSONArray jsonStreamNames = jObject.getJSONArray("StreamNames");
+                            JSONArray jsonCoverUrls = jObject.getJSONArray("CoverUrls");
+                            JSONArray jsonStreamIds = jObject.getJSONArray("StreamIds");
+                            if (jsonStreamNames.length() > 0) {
+                                numResult = jsonStreamNames.length();
+                                for (int i = 0; i < jsonStreamNames.length(); i++) {
+                                    streamNames.add(jsonStreamNames.get(i).toString());
+                                    coverUrls.add(jsonCoverUrls.get(i).toString());
+                                    streamIds.add(jsonStreamIds.get(i).toString());
+                                }
+                                StringBuilder searchInfoSb = new StringBuilder();
+                                searchInfoSb.append(Integer.toString(numResult) + " results found for");
+                                searchInfoSb.append(mAutoCompleteTextView.getText().toString());
+                                mTextView.setText(searchInfoSb.toString());
+                                mGridView.setAdapter(new ImageAdapter(context, coverUrls)); // TODO: set new adapter or change the data of the original adapter ? notifyDataSetChanged()?
+                                mGridView.invalidateViews();
+                                mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                        Intent intentViewStream = new Intent(context, ViewStreamActivity.class);
+                                        intentViewStream.putExtra("stream_id", streamIds.get(position));
+                                        startActivity(intentViewStream);
+                                    }
+                                });
+                            }
+                        } catch (JSONException e) {
+                            Log.e(TAG, "json exception: " + e.toString());
                         }
-                    });
-                }catch(JSONException e){
-                    Log.e(TAG, "JSON error " + e.toString());
-                }
-            }catch(MalformedURLException e){
-                Log.e(TAG, "Error processing url", e);
-            }catch(IOException e){
-                Log.e(TAG, "Error connecting to Places API", e);
-            }finally {
-                if (conn != null){
-                    conn.disconnect();
-                }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        Log.e(TAG, "fail to get response from server " + error.toString());
+                    }
+                });
+            }catch (IOException e) { // catch exception in url encode
+                Log.e(TAG, "fail to encode url for searching" + e.toString());
             }
         }
     };

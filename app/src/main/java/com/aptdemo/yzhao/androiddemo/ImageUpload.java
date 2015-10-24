@@ -91,7 +91,6 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
                             startActivityForResult(takePictureIntent, TAKE_PHOTO);
                         }
                     }
-
                 }
         );
 

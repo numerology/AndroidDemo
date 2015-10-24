@@ -42,8 +42,9 @@ public class ImageAdapter extends BaseAdapter {
         } else {
             imageView = (ImageView) convertView;
         }
-
-        Picasso.with(mContext).load(imageURLs.get(position)).into(imageView);
+        if ((imageURLs.get(position)!=null && !imageURLs.get(position).isEmpty())) {
+            Picasso.with(mContext).load(imageURLs.get(position)).into(imageView);
+        }
         return imageView;
     }
 
