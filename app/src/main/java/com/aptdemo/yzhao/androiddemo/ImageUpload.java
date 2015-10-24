@@ -122,8 +122,6 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
     //    String streamID = getIntent().getStringExtra("streamID");
         //TextView responseText = (TextView) this.findViewById(R.id.stream_name_upload);
         //responseText.setText(streamName);
-
-
     }
 
     @Override
