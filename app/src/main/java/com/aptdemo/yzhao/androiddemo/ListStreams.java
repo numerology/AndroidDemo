@@ -28,7 +28,7 @@ public class ListStreams extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_streams);
 
-        final String request_url = "http://just-plate-107116.appspot.com/mobile/stream_list";
+        final String request_url = Consts.API_STREAM_LIST_URL;
         AsyncHttpClient httpClient = new AsyncHttpClient();
         httpClient.get(request_url, new AsyncHttpResponseHandler() {
             @Override

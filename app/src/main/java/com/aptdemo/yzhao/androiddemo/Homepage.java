@@ -357,7 +357,7 @@ public class Homepage extends ActionBarActivity implements
 
         mAllStreamBtn.setEnabled(false);
         mNearbyStreamBtn.setEnabled(false);
-        mSearchBtn.setEnabled(false);
+        mSearchBtn.setEnabled(true);
 
         mStatus.setText("Signed out");
 
@@ -378,6 +378,10 @@ public class Homepage extends ActionBarActivity implements
 
     public void viewAllImages(View view){
         Intent intent= new Intent(this, DisplayImages.class);
+        startActivity(intent);
+    }
+    public void searchStreams(View view){
+        Intent intent = new Intent(this, SearchStream.class);
         startActivity(intent);
     }
 
