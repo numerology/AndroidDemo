@@ -2,6 +2,7 @@ package com.aptdemo.yzhao.androiddemo;
 import android.app.Dialog;
 import android.content.Context;
 
+import android.content.Intent;
 import android.os.Bundle;
 //import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBarActivity;
@@ -33,6 +34,7 @@ import com.loopj.android.http.*;
 public class DisplayImages extends ActionBarActivity {
     Context context = this;
     private String TAG  = "Display Images";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<String> imageURLs;
-
+//TODO: adding case when the url is unavailable
     public ImageAdapter(Context c, ArrayList<String> imageURLs) {
         mContext = c;
         this.imageURLs = imageURLs;

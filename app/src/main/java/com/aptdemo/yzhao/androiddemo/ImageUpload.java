@@ -43,12 +43,18 @@ import java.io.ByteArrayOutputStream;
 
 public class ImageUpload extends ActionBarActivity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener{
     private static final int PICK_IMAGE = 1;
+    private static final int TAKE_PHOTO = 2;
+
     Context context = this;
     private LocationClient currentLocation;
     private AutoCompleteTextView streamAutoCompleteTextView;
-
+    String streamName;
+    private Intent currentIntent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        currentIntent = getIntent();
+
+        streamName = currentIntent.getStringExtra("stream_name");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_upload);
         if (servicesConnected()) {
@@ -61,6 +67,7 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
         streamAutoCompleteTextView.setAdapter(mAdapter);
         // Choose image from library
         Button chooseFromLibraryButton = (Button) findViewById(R.id.choose_from_library);
+        Button takePhotoBtn = (Button) findViewById(R.id.take_photo);
         chooseFromLibraryButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -72,6 +79,19 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
                         // Start the Intent
                         startActivityForResult(galleryIntent, PICK_IMAGE);
                     }
+                }
+        );
+
+        takePhotoBtn.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        if (takePictureIntent.resolveActivity(getPackageManager())!=null){
+                            startActivityForResult(takePictureIntent, TAKE_PHOTO);
+                        }
+                    }
+
                 }
         );
 
@@ -104,8 +124,8 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
         //String location=mLocationClient.getLastLocation().getLatitude()+"_"+mLocationClient.getLastLocation().getLongitude();
         //System.out.println(location);
 
-        String streamName = getIntent().getStringExtra("streamName");
-        String streamID = getIntent().getStringExtra("streamID");
+    //    String streamName = getIntent().getStringExtra("streamName");
+    //    String streamID = getIntent().getStringExtra("streamID");
         //TextView responseText = (TextView) this.findViewById(R.id.stream_name_upload);
         //responseText.setText(streamName);
 
@@ -193,9 +213,6 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
 
                             // Get photo caption
 
-                            EditText text = (EditText) findViewById(R.id.stream_name);
-                            String streamName = text.getText().toString();
-
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             bitmapImage.compress(Bitmap.CompressFormat.JPEG, 50, baos);
                             byte[] b = baos.toByteArray();
@@ -211,6 +228,37 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
                         }
                     }
             );
+        }
+        else if(requestCode == TAKE_PHOTO && resultCode == RESULT_OK){
+            Bundle extras = data.getExtras();
+            ImageView imgView = (ImageView) findViewById(R.id.thumbnail);
+            final Bitmap bitmapImage = (Bitmap) extras.get("data");
+            imgView.setImageBitmap(bitmapImage);
+            Button uploadButton = (Button) findViewById(R.id.upload_to_server);
+            uploadButton.setClickable(true);
+            uploadButton.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            // Get photo caption
+
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+                            byte[] b = baos.toByteArray();
+                            byte[] encodedImage = Base64.encode(b, Base64.DEFAULT);
+                            String encodedImageStr = encodedImage.toString();
+
+                            if (currentLocation == null)
+                                System.out.println("Location Client Invalid");
+
+                            String location = currentLocation.getLastLocation().getLatitude() + "," + currentLocation.getLastLocation().getLongitude();
+                            System.out.println(location);
+                            getUploadURL(b, streamName, location);
+                        }
+                    }
+            );
+
         }
     }
 
@@ -255,6 +303,7 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 Log.w("async", "success!!!!");
                 Toast.makeText(context, "Upload Successful", Toast.LENGTH_SHORT).show();
+                finish();
             }
 
             @Override
