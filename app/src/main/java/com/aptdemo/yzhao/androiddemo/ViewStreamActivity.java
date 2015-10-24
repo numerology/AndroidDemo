@@ -36,7 +36,7 @@ public class ViewStreamActivity extends ActionBarActivity {
         setContentView(R.layout.activity_view_stream);
         Intent currentIntent = getIntent();
         String streamID = currentIntent.getStringExtra("stream_id");
-        final String request_url = "http://just-plate-107116.appspot.com/mobile/stream_view";
+        final String request_url = Consts.API_STREAM_VIEW_URL;
         RequestParams params = new RequestParams();
         params.put("stream_id",streamID);
         AsyncHttpClient httpClient = new AsyncHttpClient();

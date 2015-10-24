@@ -357,7 +357,7 @@ public class Homepage extends ActionBarActivity implements
 
         mAllStreamBtn.setEnabled(false);
         mNearbyStreamBtn.setEnabled(false);
-        mSearchBtn.setEnabled(false);
+        mSearchBtn.setEnabled(true);
 
         mStatus.setText("Signed out");
 

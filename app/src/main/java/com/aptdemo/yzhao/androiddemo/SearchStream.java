@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -40,8 +41,10 @@ public class SearchStream extends ActionBarActivity {//implements
     private TextView mTextView;
     private GridView mGridView;
 
-
-
+    private ArrayList<String> streamNames = new ArrayList<String>();
+    private ArrayList<String> coverUrls = new ArrayList<String>();
+    private ArrayList<String> streamIds = new ArrayList<String>();
+    private int numResult = 0;
     Context context = this;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +83,41 @@ public class SearchStream extends ActionBarActivity {//implements
                 Log.w(TAG,"response: "+responseJsonString.toString());
                 try{
                     JSONObject jObject = new JSONObject(responseJsonString.toString());
-                    JSONArray streamNames = jObject.getJSONArray("StreamNames");
-                    JSONArray coverUrls = jObject.getJSONArray("CoverUrls");
+                    JSONArray jsonStreamNames = jObject.getJSONArray("StreamNames");
+                    JSONArray jsonCoverUrls = jObject.getJSONArray("CoverUrls");
+                    JSONArray jsonStreamIds = jObject.getJSONArray("StreamIds");
+                    if(jsonStreamNames.length()>0){
+                        streamNames = new ArrayList<String>(jsonStreamNames.length());
+                        coverUrls = new ArrayList<String>(jsonStreamNames.length());
+                        for (int i = 0; i < jsonStreamNames.length(); i++){
+                            streamNames.set(i, jsonStreamNames.get(i).toString());
+                            coverUrls.set(i,jsonCoverUrls.get(i).toString());
+                            streamIds.set(i, jsonStreamIds.get(i).toString());
+                        }
+                    }else {
+                        streamNames = new ArrayList<String>();
+                        coverUrls = new ArrayList<String>();
+                    }
+                    // Handle return results and show messages/gridviews
+                    if (streamNames.isEmpty()){
+                        numResult = 0;
+                    }else{
+                        numResult = streamNames.size();
+                    }
+                    StringBuilder searchInfoSb = new StringBuilder();
+                    searchInfoSb.append(Integer.toString(numResult) + " results found for");
+                    searchInfoSb.append(mAutoCompleteTextView.getText().toString());
+                    mTextView.setText(searchInfoSb.toString());
+                    mGridView.setAdapter(new ImageAdapter(context, coverUrls)); // TODO: set new adapter or change the data of the original adapter ? notifyDataSetChanged()?
+                    mGridView.invalidateViews();
+                    mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            Intent intentViewStream = new Intent(context, ViewStreamActivity.class);
+                            intentViewStream.putExtra("stream_id", streamIds.get(position));
+                            startActivity(intentViewStream);
+                        }
+                    });
                 }catch(JSONException e){
                     Log.e(TAG, "JSON error " + e.toString());
                 }
@@ -94,16 +130,7 @@ public class SearchStream extends ActionBarActivity {//implements
                     conn.disconnect();
                 }
             }
-            // Handle return results and show messages/gridviews
-
         }
     };
-
-    public void submitSearchKeywords(View view){
-        Intent intent = new Intent(this, Homepage.class); //TODO: Add class to handle search or change this method
-        EditText editText = (EditText) findViewById(R.id.search_text);
-        String keywords = editText.getText().toString();
-        intent.putExtra(SEARCH_KEYWORDS, keywords);
-    }
 
 }

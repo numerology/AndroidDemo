@@ -82,6 +82,7 @@
             android:layout_height="wrap_content"
             android:text="@string/searchPage"
             android:onClick="searchStreams"
+            android:enabled="true"
             />
 
 
