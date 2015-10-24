@@ -38,6 +38,18 @@ public class ViewNearby extends ActionBarActivity implements GooglePlayServicesC
             System.out.println("servicesConnected");
             currentLocation = new LocationClient(this, this, this);
         }
+
+    }
+
+    public void onConnected(Bundle b){
+        Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
+        //String location=mLocationClient.getLastLocation().getLatitude()+"_"+mLocationClient.getLastLocation().getLongitude();
+        //System.out.println(location);
+
+        //    String streamName = getIntent().getStringExtra("streamName");
+        //    String streamID = getIntent().getStringExtra("streamID");
+        //TextView responseText = (TextView) this.findViewById(R.id.stream_name_upload);
+        //responseText.setText(streamName);
         final String request_url = "http://just-plate-107116.appspot.com/mobile/stream_nearby";
 
         RequestParams params = new RequestParams();
@@ -50,22 +62,22 @@ public class ViewNearby extends ActionBarActivity implements GooglePlayServicesC
         httpClient.get(request_url, params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
-                final ArrayList<String> coverURLs = new ArrayList<String>();
+                final ArrayList<String> imgURLs = new ArrayList<String>();
                 final ArrayList<String> streamIDs = new ArrayList<String>();
 
                 try {
                     JSONObject jObject = new JSONObject(new String(response));
-                    JSONArray jcoverUrl = jObject.getJSONArray("cover_url");
+                    JSONArray jimgUrl = jObject.getJSONArray("cover_url");
                     JSONArray jid = jObject.getJSONArray("streams_id");
 
-                    for (int i = 0; i < jcoverUrl.length(); i++) {
-                        coverURLs.add(jcoverUrl.getString(i));
+                    for (int i = 0; i < jimgUrl.length(); i++) {
+                        imgURLs.add(jimgUrl.getString(i));
                         streamIDs.add(jid.getString(i));
                         System.out.println("adding ID: " + jid.getString(i));
                     }
 
                     GridView gridview = (GridView) findViewById(R.id.streamGrid);
-                    gridview.setAdapter(new ImageAdapter(context, coverURLs));
+                    gridview.setAdapter(new ImageAdapter(context, imgURLs));
                     gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -86,17 +98,6 @@ public class ViewNearby extends ActionBarActivity implements GooglePlayServicesC
                 Log.e(TAG, "There was a problem in retrieving the url : " + e.toString());
             }
         });
-    }
-
-    public void onConnected(Bundle b){
-        Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
-        //String location=mLocationClient.getLastLocation().getLatitude()+"_"+mLocationClient.getLastLocation().getLongitude();
-        //System.out.println(location);
-
-        //    String streamName = getIntent().getStringExtra("streamName");
-        //    String streamID = getIntent().getStringExtra("streamID");
-        //TextView responseText = (TextView) this.findViewById(R.id.stream_name_upload);
-        //responseText.setText(streamName);
     }
     @Override
     public void onConnectionFailed(ConnectionResult r){
