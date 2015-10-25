@@ -7,8 +7,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.content.Context;
 import android.widget.ImageView;
@@ -30,63 +32,21 @@ public class ViewStreamActivity extends ActionBarActivity {
     private String TAG = "View Stream";
     Context context = this;
     String streamName;
-
+    private boolean ownerflag;
+    private Button uploadBtn;
+    private String userEmail;
+    private String streamID;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_stream);
+
+        uploadBtn = (Button) findViewById(R.id.open_image_upload_page);
         Intent currentIntent = getIntent();
-        String streamID = currentIntent.getStringExtra("stream_id");
-        final String request_url = Consts.API_STREAM_VIEW_URL;
-        RequestParams params = new RequestParams();
-        params.put("stream_id",streamID);
-        AsyncHttpClient httpClient = new AsyncHttpClient();
-        httpClient.get(request_url, params, new AsyncHttpResponseHandler(){
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] response){
+        userEmail = currentIntent.getStringExtra("user_email");
+        streamID = currentIntent.getStringExtra("stream_id");
 
-                final ArrayList<String> imageURLs = new ArrayList<String>();
-                try{
-                    JSONObject jObject = new JSONObject(new String(response));
-                    JSONArray imgUrl = jObject.getJSONArray("image_url");
-                    streamName = jObject.getString("stream_name");
-
-                    for (int i = 0; i < imgUrl.length(); i++){
-                        imageURLs.add(imgUrl.getString(i));
-                    }
-
-                    GridView gridview = (GridView) findViewById(R.id.singleStreamGrid);
-                    gridview.setAdapter(new ImageAdapter(context,imageURLs));
-                    gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View v,
-                                                int position, long id) {
-
-                            Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
-
-                            Dialog imageDialog = new Dialog(context);
-                            imageDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                            imageDialog.setContentView(R.layout.thumbnail);
-                            ImageView image = (ImageView) imageDialog.findViewById(R.id.thumbnail_IMAGEVIEW);
-
-                            Picasso.with(context).load(imageURLs.get(position)).into(image);
-
-                            imageDialog.show();
-                        }
-                    });
-
-                }
-                catch(JSONException j){
-                    System.out.println("JSON Error in View Stream");
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e){
-                Log.e(TAG, "There was a problem in viewing a stream : " + e.toString());
-            }
-
-        });
+        System.out.println("on creating view stream");
 
     }
 
@@ -97,13 +57,16 @@ public class ViewStreamActivity extends ActionBarActivity {
     }
     @Override
     public void onResume(){
+
+
         super.onResume();
-        setContentView(R.layout.activity_view_stream);
-        Intent currentIntent = getIntent();
-        String streamID = currentIntent.getStringExtra("stream_id");
+        //uploadBtn.setVisibility(View.GONE);
+
+
         final String request_url = Consts.API_STREAM_VIEW_URL;
         RequestParams params = new RequestParams();
         params.put("stream_id",streamID);
+        params.put("user_email", userEmail);
         AsyncHttpClient httpClient = new AsyncHttpClient();
         httpClient.get(request_url, params, new AsyncHttpResponseHandler() {
             @Override
@@ -114,6 +77,20 @@ public class ViewStreamActivity extends ActionBarActivity {
                     JSONObject jObject = new JSONObject(new String(response));
                     JSONArray imgUrl = jObject.getJSONArray("image_url");
                     streamName = jObject.getString("stream_name");
+                    ownerflag = jObject.getBoolean("owner_flag");
+                    Log.d(TAG,"ownerflag= "+ownerflag);
+
+                    uploadBtn.setEnabled(ownerflag);
+                    if(ownerflag){
+                        uploadBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                uploadImage(view);
+                            }
+                        });
+                    }
+
+
 
                     for (int i = 0; i < imgUrl.length(); i++) {
                         imageURLs.add(imgUrl.getString(i));
@@ -149,6 +126,7 @@ public class ViewStreamActivity extends ActionBarActivity {
                 Log.e(TAG, "There was a problem in viewing a stream : " + e.toString());
             }
         });
+
     }
 
     @Override

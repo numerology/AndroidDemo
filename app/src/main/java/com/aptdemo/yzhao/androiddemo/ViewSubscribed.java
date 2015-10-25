@@ -27,11 +27,12 @@ public class ViewSubscribed extends ActionBarActivity {
 
     private String TAG = "ListStreams";
     Context context = this;
+  //  private final String userEmail = getIntent().getStringExtra("user_email");
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_subscribed);
-        String userEmail = getIntent().getStringExtra("user_email");
+        final String userEmail = getIntent().getStringExtra("user_email");
         final String request_url = Consts.API_STREAM_SUBSCRIBED_URL;
         AsyncHttpClient httpClient = new AsyncHttpClient();
         RequestParams params = new RequestParams();
@@ -53,7 +54,7 @@ public class ViewSubscribed extends ActionBarActivity {
                         System.out.println("adding ID: "+jid.getString(i));
                     }
 
-                    GridView gridview = (GridView) findViewById(R.id.streamGrid);
+                    GridView gridview = (GridView) findViewById(R.id.SubscribedStreamGrid);
                     gridview.setAdapter(new ImageAdapter(context,coverURLs));
                     gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
@@ -61,6 +62,7 @@ public class ViewSubscribed extends ActionBarActivity {
                             Toast.makeText(context, "Checking single stream", Toast.LENGTH_SHORT).show();
                             Intent viewStreamIntent = new Intent(context, ViewStreamActivity.class);
                             viewStreamIntent.putExtra("stream_id",streamIDs.get(position));
+                            viewStreamIntent.putExtra("user_email",userEmail);
                             startActivity(viewStreamIntent);
                         }
                     });

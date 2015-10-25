@@ -44,6 +44,7 @@ public class SearchStream extends ActionBarActivity {//implements
     private Button mSearchButton;
     private TextView mTextView;
     private GridView mGridView;
+//    private final String userEmail = getIntent().getStringExtra("user_email");
 
     final private ArrayList<String> streamNames = new ArrayList<String>();
     final private ArrayList<String> coverUrls = new ArrayList<String>();
@@ -70,7 +71,7 @@ public class SearchStream extends ActionBarActivity {//implements
             }
             StringBuilder responseJsonString = new StringBuilder();
             AsyncHttpClient httpClient = new AsyncHttpClient();
-
+            final String userEmail = getIntent().getStringExtra("user_email");
             try {
                 StringBuilder sb = new StringBuilder(Consts.API_SEARCH_STREAM_URL);
                 sb.append("?search_keywords=" + URLEncoder.encode(mAutoCompleteTextView.getText().toString(), "utf8"));
@@ -106,6 +107,7 @@ public class SearchStream extends ActionBarActivity {//implements
                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                         Intent intentViewStream = new Intent(context, ViewStreamActivity.class);
                                         intentViewStream.putExtra("stream_id", streamIds.get(position));
+                                        intentViewStream.putExtra("user_email",userEmail);
                                         startActivity(intentViewStream);
                                     }
                                 });
