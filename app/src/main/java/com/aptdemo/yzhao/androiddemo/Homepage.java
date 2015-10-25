@@ -351,6 +351,7 @@ public class Homepage extends ActionBarActivity implements
             case Menu.FIRST + 1:
             {
                 Intent intent = new Intent(this, SearchStream.class);
+                intent.putExtra("user_email", userEmail);
                 startActivity(intent);
                 finish();
                 break;
@@ -358,6 +359,7 @@ public class Homepage extends ActionBarActivity implements
             case Menu.FIRST + 2:
             {
                 Intent intent = new Intent(this, ViewNearby.class);
+                intent.putExtra("user_email", userEmail);
                 startActivity(intent);
                 finish();
                 break;
@@ -409,6 +411,7 @@ public class Homepage extends ActionBarActivity implements
         mAllStreamBtn.setEnabled(false);
         mNearbyStreamBtn.setEnabled(false);
         mSearchBtn.setEnabled(true);
+        userEmail = "";
 
         mStatus.setText("Signed out");
 
@@ -427,22 +430,22 @@ public class Homepage extends ActionBarActivity implements
         mGoogleApiClient.connect();
     }
 
-    public void viewAllImages(View view){
-        Intent intent= new Intent(this, DisplayImages.class);
-        startActivity(intent);
-    }
+
     public void searchStreams(View view){
         Intent intent = new Intent(this, SearchStream.class);
+        intent.putExtra("user_email", userEmail);
         startActivity(intent);
     }
 
     public void viewAllStreams(View view){
         Intent intent= new Intent(this, ListStreams.class);
+        intent.putExtra("user_email", userEmail);
         startActivity(intent);
     }
 
     public void viewNearStreams(View view){
         Intent intent= new Intent(this, ViewNearby.class);
+        intent.putExtra("user_email", userEmail);
         startActivity(intent);
     }
 

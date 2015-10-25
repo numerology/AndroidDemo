@@ -30,9 +30,10 @@ public class ViewNearby extends ActionBarActivity implements GooglePlayServicesC
     private String TAG = "VeiwNearBy";
     Context context = this;
     private LocationClient currentLocation;
+
     String location;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_nearby);
         if (servicesConnected()) {
@@ -52,7 +53,7 @@ public class ViewNearby extends ActionBarActivity implements GooglePlayServicesC
         //TextView responseText = (TextView) this.findViewById(R.id.stream_name_upload);
         //responseText.setText(streamName);
         final String request_url = "http://just-plate-107116.appspot.com/mobile/stream_nearby";
-
+        final String userEmail = getIntent().getStringExtra("user_email");
         RequestParams params = new RequestParams();
 
         if(currentLocation != null) {
@@ -85,6 +86,7 @@ public class ViewNearby extends ActionBarActivity implements GooglePlayServicesC
                             Toast.makeText(context, "Checking single stream", Toast.LENGTH_SHORT).show();
                             Intent viewStreamIntent = new Intent(context, ViewStreamActivity.class);
                             viewStreamIntent.putExtra("stream_id", streamIDs.get(position));
+                            viewStreamIntent.putExtra("user_email", userEmail);
                             startActivity(viewStreamIntent);
                         }
                     });

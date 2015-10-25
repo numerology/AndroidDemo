@@ -50,6 +50,7 @@ public class SearchStream extends ActionBarActivity {//implements
     private GridView mGridView;
     private int currentPage = 0; // current page of results shown
     private int totalPage = 0;
+//    private final String userEmail = getIntent().getStringExtra("user_email");
 
     final private ArrayList<String> streamNames = new ArrayList<String>();
     final private ArrayList<String> coverUrls = new ArrayList<String>();
@@ -84,7 +85,7 @@ public class SearchStream extends ActionBarActivity {//implements
             }
             StringBuilder responseJsonString = new StringBuilder();
             AsyncHttpClient httpClient = new AsyncHttpClient();
-
+            final String userEmail = getIntent().getStringExtra("user_email");
             try {
                 StringBuilder sb = new StringBuilder(Consts.API_SEARCH_STREAM_URL);
                 sb.append("?search_keywords=" + URLEncoder.encode(mAutoCompleteTextView.getText().toString(), "utf8"));

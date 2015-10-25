@@ -24,11 +24,12 @@ import java.util.ArrayList;
 public class ListStreams extends ActionBarActivity {
     private String TAG = "ListStreams";
     Context context = this;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_streams);
-
+        final String userEmail = getIntent().getStringExtra("user_email");
         final String request_url = Consts.API_STREAM_LIST_URL;
         AsyncHttpClient httpClient = new AsyncHttpClient();
         httpClient.get(request_url, new AsyncHttpResponseHandler() {
@@ -56,6 +57,7 @@ public class ListStreams extends ActionBarActivity {
                             Toast.makeText(context, "Checking single stream", Toast.LENGTH_SHORT).show();
                             Intent viewStreamIntent = new Intent(context, ViewStreamActivity.class);
                             viewStreamIntent.putExtra("stream_id",streamIDs.get(position));
+                            viewStreamIntent.putExtra("user_email",userEmail);
                             startActivity(viewStreamIntent);
                         }
                     });
