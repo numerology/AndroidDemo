@@ -12,8 +12,12 @@ public final class Consts {
 
     public static final String VIEW_ALL_PHOTOS_URL="http://aptandroiddemo.appspot.com/viewAllPhotos"; // url used in demo
 
+    public static final int PHOTO_QUALITY = 20; //quality for the photo taken
+
     public enum AutocompleteType{
         ALL,
         STREAM_NAME
     }
+
+    public static final int RESULT_CODE_TAKE_PHOTO = 1;
 }
