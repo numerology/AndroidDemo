@@ -67,8 +67,8 @@ public class ViewNearby extends ActionBarActivity implements GooglePlayServicesC
 
                 try {
                     JSONObject jObject = new JSONObject(new String(response));
-                    JSONArray jimgUrl = jObject.getJSONArray("cover_url");
-                    JSONArray jid = jObject.getJSONArray("streams_id");
+                    JSONArray jimgUrl = jObject.getJSONArray("image_url");
+                    JSONArray jid = jObject.getJSONArray("stream_id");
 
                     for (int i = 0; i < jimgUrl.length(); i++) {
                         imgURLs.add(jimgUrl.getString(i));
@@ -76,7 +76,7 @@ public class ViewNearby extends ActionBarActivity implements GooglePlayServicesC
                         System.out.println("adding ID: " + jid.getString(i));
                     }
 
-                    GridView gridview = (GridView) findViewById(R.id.streamGrid);
+                    GridView gridview = (GridView) findViewById(R.id.NearbyStreamGrid);
                     gridview.setAdapter(new ImageAdapter(context, imgURLs));
                     gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
