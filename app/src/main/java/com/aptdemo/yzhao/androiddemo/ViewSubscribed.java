@@ -35,8 +35,8 @@ public class ViewSubscribed extends ActionBarActivity {
         final String request_url = Consts.API_STREAM_SUBSCRIBED_URL;
         AsyncHttpClient httpClient = new AsyncHttpClient();
         RequestParams params = new RequestParams();
-        params.put();
-        httpClient.get(request_url, new AsyncHttpResponseHandler() {
+        params.put("user_email",userEmail);
+        httpClient.get(request_url, params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response){
                 final ArrayList<String> coverURLs = new ArrayList<String>();
