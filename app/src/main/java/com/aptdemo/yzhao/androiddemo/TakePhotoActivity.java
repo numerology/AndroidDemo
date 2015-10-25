@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -46,7 +47,7 @@ public class TakePhotoActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        requestWindowFeature(Window.FEATURE_NO_TITLE); // remove title from window
         setContentView(R.layout.activity_take_photo);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TakePhotoBtn = (Button) findViewById(R.id.take_photo_take_picture);
@@ -117,7 +118,7 @@ public class TakePhotoActivity extends ActionBarActivity {
                 boolean opened = safeCameraOpen(cameraId);
                 if (opened){
                     //mPhotoPreview = new PhotoPreview(context);
-                    mPhotoPreview.refreshCamera(mCamera);
+                    mPhotoPreview.refreshCamera(mCamera, cameraId);
                     CameraFrameLayout.addView(mPhotoPreview);
                 } else {
                     Toast.makeText(context, "Fail to open camera", Toast.LENGTH_SHORT);
@@ -153,16 +154,35 @@ public class TakePhotoActivity extends ActionBarActivity {
         public void onPictureTaken(byte[] data, Camera camera) {
             //add writing to file
             if (data != null && data.length > 0){
+                if(currentPhoto != null){
+                    currentPhoto.recycle();
+                }
+                if(drawablePhoto != null){
+                    drawablePhoto.recycle();
+                }
                 BitmapFactory.Options opts = new BitmapFactory.Options();
                 opts.inSampleSize = 4;
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
                 currentPhoto = BitmapFactory.decodeByteArray(data, 0, data.length, opts); // picture is too large....
+                int rotation = mPhotoPreview.getDisplayOrientation();
                 currentPhoto.compress(Bitmap.CompressFormat.JPEG, Consts.PHOTO_QUALITY, os);
                 byte[] array = os.toByteArray();
                 currentPhoto.recycle();
                 currentPhoto = BitmapFactory.decodeByteArray(array, 0, array.length);
-                if(drawablePhoto != null){
-                    drawablePhoto.recycle();
+                if (rotation != 0){
+                    Bitmap oldBitmap = currentPhoto;
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(rotation);
+                    currentPhoto = Bitmap.createBitmap(
+                            oldBitmap,
+                            0,
+                            0,
+                            oldBitmap.getWidth(),
+                            oldBitmap.getHeight(),
+                            matrix,
+                            false
+                    );
+                    oldBitmap.recycle();
                 }
                 drawablePhoto = currentPhoto.copy(Bitmap.Config.ARGB_8888, true);
                 UsePhotoBtn.setVisibility(View.VISIBLE);
@@ -191,7 +211,7 @@ public class TakePhotoActivity extends ActionBarActivity {
         }
         Log.w(TAG, "preview null: " + Boolean.toString(mPhotoPreview == null));
         Log.w(TAG, "camera null: " + Boolean.toString(mCamera == null));
-        mPhotoPreview.refreshCamera(mCamera);
+        mPhotoPreview.refreshCamera(mCamera, cameraId);
     }
 
     @Override
