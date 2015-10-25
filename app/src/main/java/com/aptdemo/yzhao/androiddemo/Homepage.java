@@ -17,6 +17,8 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -36,6 +38,7 @@ public class Homepage extends ActionBarActivity implements
     private static final int RC_SIGN_IN = 0;
 
     private static final String SAVED_PROGRESS = "sign_in_progress";
+    private String userEmail;
 
     // GoogleApiClient wraps our service connection to Google Play services and
     // provides access to the users sign in state and Google's APIs.
@@ -248,7 +251,8 @@ public class Homepage extends ActionBarActivity implements
 
 
         mStatus.setText(email + " is currently Signed In");
-
+        userEmail = email.toString();
+        System.out.println(email);
 
     }
 
@@ -324,6 +328,53 @@ public class Homepage extends ActionBarActivity implements
             //showDialog(DIALOG_PLAY_SERVICES_ERROR);
         }
     }
+
+    /* (non-Javadoc)
+	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+	 */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // TODO Auto-generated method stub
+        menu.add(Menu.NONE, Menu.FIRST + 1, 1, "Search");
+     //   menu.add(Menu.NONE, Menu.FIRST + 6, 6, "退出");
+        menu.add(Menu.NONE, Menu.FIRST + 2, 2, "Nearby");
+        menu.add(Menu.NONE, Menu.FIRST + 3, 3, "Subscribe");
+//		menu.add(Menu.NONE, Menu.FIRST + 4, 4, "日程").setIcon(android.R.drawable.ic_menu_agenda);
+    //    menu.add(Menu.NONE, Menu.FIRST+5 , 5, "给我们提建议");
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // TODO Auto-generated method stub
+        switch (item.getItemId()) {
+            case Menu.FIRST + 1:
+            {
+                Intent intent = new Intent(this, SearchStream.class);
+                startActivity(intent);
+                finish();
+                break;
+            }
+            case Menu.FIRST + 2:
+            {
+                Intent intent = new Intent(this, ViewNearby.class);
+                startActivity(intent);
+                finish();
+                break;
+            }
+            case Menu.FIRST + 3:
+            {
+                Intent intent = new Intent(this, ViewSubscribed.class);
+                intent.putExtra("user_email", userEmail);
+                startActivity(intent);
+                finish();
+                break;
+            }
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode,

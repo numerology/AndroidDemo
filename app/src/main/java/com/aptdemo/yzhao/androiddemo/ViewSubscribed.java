@@ -1,5 +1,6 @@
 package com.aptdemo.yzhao.androiddemo;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -8,11 +9,11 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.content.Context;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
@@ -21,16 +22,20 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class ListStreams extends ActionBarActivity {
+public class ViewSubscribed extends ActionBarActivity {
+
+
     private String TAG = "ListStreams";
     Context context = this;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_streams);
-
-        final String request_url = Consts.API_STREAM_LIST_URL;
+        setContentView(R.layout.activity_view_subscribed);
+        String userEmail = getIntent().getStringExtra("user_email");
+        final String request_url = Consts.API_STREAM_SUBSCRIBED_URL;
         AsyncHttpClient httpClient = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.put();
         httpClient.get(request_url, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response){

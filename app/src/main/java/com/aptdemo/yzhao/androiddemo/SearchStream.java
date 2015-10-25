@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -124,5 +125,17 @@ public class SearchStream extends ActionBarActivity {//implements
             }
         }
     };
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        //在欢迎界面屏蔽BACK键
+        if(keyCode==KeyEvent.KEYCODE_BACK) {
+            Intent intent = new Intent(this, Homepage.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return true;
+    }
 
 }
