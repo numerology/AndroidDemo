@@ -48,8 +48,8 @@
     <string name="search_hint">Keywords</string>
     <string name="search_btn">Search</string>
     <string name="search_info">Type in keywords and search for stream</string>
-    <string name="pre_results">pre results</string>
-    <string name="post_results"> more results</string>
+    <string name="search_pre_page">Pre results</string>
+    <string name="search_next_page">More results</string>
 
     <!--Strings for image upload-->
     <string name="private_take_photo">Private Take a photo</string>

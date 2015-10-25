@@ -18,6 +18,9 @@ public final class Consts {
     public static final int PICTURE_SIZE_MAX_WIDTH = 1280;
     public static final int PREVIEW_SIZE_MAX_WIDTH = 640;
 
+    // Num of streams shown on one search page
+    public static final int SEARCH_STREAM_PER_PAGE = 16;
+
     public enum AutocompleteType{
         ALL,
         STREAM_NAME

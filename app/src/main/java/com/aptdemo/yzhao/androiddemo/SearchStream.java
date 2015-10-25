@@ -14,6 +14,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,12 +43,20 @@ public class SearchStream extends ActionBarActivity {//implements
 
     private AutoCompleteTextView mAutoCompleteTextView;
     private Button mSearchButton;
+    private LinearLayout mLinearLayout;
+    private Button mPrePageButton;
+    private Button mNextPageButton;
     private TextView mTextView;
     private GridView mGridView;
+    private int currentPage = 0; // current page of results shown
+    private int totalPage = 0;
 
     final private ArrayList<String> streamNames = new ArrayList<String>();
     final private ArrayList<String> coverUrls = new ArrayList<String>();
     final private ArrayList<String> streamIds = new ArrayList<String>();
+    final private ArrayList<String> pageStreamNames = new ArrayList<String>();
+    final private ArrayList<String> pageCoverUrls = new ArrayList<String>();
+    final private ArrayList<String> pageStreamIds = new ArrayList<String>();
     private int numResult = 0;
     Context context = this;
     @Override
@@ -60,6 +69,11 @@ public class SearchStream extends ActionBarActivity {//implements
         mSearchButton.setOnClickListener(searchHandler);
         mTextView = (TextView) findViewById(R.id.search_info);
         mGridView = (GridView) findViewById(R.id.search_gridview);
+        mLinearLayout = (LinearLayout) findViewById(R.id.search_navigate);
+        mPrePageButton = (Button) findViewById(R.id.search_pre_page);
+        mPrePageButton.setOnClickListener(prePageHandler);
+        mNextPageButton = (Button) findViewById(R.id.search_next_page);
+        mNextPageButton.setOnClickListener(nextPageHandler);
     }
 
     View.OnClickListener searchHandler = new View.OnClickListener(){
@@ -96,19 +110,12 @@ public class SearchStream extends ActionBarActivity {//implements
                                     streamIds.add(jsonStreamIds.get(i).toString());
                                 }
                                 StringBuilder searchInfoSb = new StringBuilder();
-                                searchInfoSb.append(Integer.toString(numResult) + " results found for");
+                                searchInfoSb.append(Integer.toString(numResult) + " results found for ");
                                 searchInfoSb.append(mAutoCompleteTextView.getText().toString());
                                 mTextView.setText(searchInfoSb.toString());
-                                mGridView.setAdapter(new ImageAdapter(context, coverUrls)); // TODO: set new adapter or change the data of the original adapter ? notifyDataSetChanged()?
-                                mGridView.invalidateViews();
-                                mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                        Intent intentViewStream = new Intent(context, ViewStreamActivity.class);
-                                        intentViewStream.putExtra("stream_id", streamIds.get(position));
-                                        startActivity(intentViewStream);
-                                    }
-                                });
+                                currentPage = 1;
+                                totalPage = (int) Math.ceil(Double.valueOf(Integer.toString(streamNames.size()))/Double.valueOf(Integer.toString(Consts.SEARCH_STREAM_PER_PAGE)));
+                                showSearchResult(currentPage);
                             }
                         } catch (JSONException e) {
                             Log.e(TAG, "json exception: " + e.toString());
@@ -138,4 +145,73 @@ public class SearchStream extends ActionBarActivity {//implements
         return true;
     }
 
+    private void showSearchResult(int page){
+        if (totalPage == 0){
+            Log.w(TAG, "total page is zero");
+            mGridView.setAdapter(new ImageAdapter(context, coverUrls));
+            mGridView.invalidateViews();
+            return;
+        }
+        if(page <= 0){
+            Log.e(TAG, "show search result: page number too small");
+            return;
+        }
+        if (page > totalPage){
+            Log.w(TAG, "show search result: page number too large");
+            return;
+        }
+        if (totalPage == 1){
+            mLinearLayout.setVisibility(View.GONE);
+        }else{
+            mLinearLayout.setVisibility(View.VISIBLE);
+            if (page < totalPage){
+                mNextPageButton.setVisibility(View.VISIBLE);
+            } else {
+                mNextPageButton.setVisibility(View.INVISIBLE);
+            }
+            if (page == 1){
+                mPrePageButton.setVisibility(View.INVISIBLE);
+            }else{
+                mPrePageButton.setVisibility(View.VISIBLE);
+            }
+        }
+        pageStreamNames.clear();
+        pageCoverUrls.clear();
+        pageStreamIds.clear();
+        int startStreamNum = (page - 1)*Consts.SEARCH_STREAM_PER_PAGE;
+        int endStreamNum = (int) Math.min(page*Consts.SEARCH_STREAM_PER_PAGE, totalPage);
+        for (int i = startStreamNum; i < endStreamNum ; i++){
+            pageStreamNames.add(streamNames.get(i));
+            pageCoverUrls.add(coverUrls.get(i));
+            pageStreamIds.add(streamIds.get(i));
+        }
+        mGridView.setAdapter(new ImageAdapter(context, pageCoverUrls));
+        mGridView.invalidateViews();
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intentViewStream = new Intent(context, ViewStreamActivity.class);
+                intentViewStream.putExtra("stream_id", pageStreamIds.get(position));
+                startActivity(intentViewStream);
+            }
+        });
+    }
+    View.OnClickListener prePageHandler = new View.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            if (currentPage > 1){
+                currentPage = currentPage - 1;
+                showSearchResult(currentPage);
+            }
+        }
+    };
+    View.OnClickListener nextPageHandler = new View.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            if (currentPage < totalPage){
+                currentPage = currentPage + 1;
+                showSearchResult(currentPage);
+            }
+        }
+    };
 }
