@@ -99,10 +99,11 @@ public class ViewStreamActivity extends ActionBarActivity {
         httpClient.get(request_url, params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
-
+                imageURLs.clear(); // forgot to clear 10/26/2015
                 try {
                     JSONObject jObject = new JSONObject(new String(response));
                     JSONArray imgUrl = jObject.getJSONArray("image_url");
+                    Log.d(TAG, "received image number is: " + Integer.toString(imgUrl.length()));
                     streamName = jObject.getString("stream_name");
                     setStreamName();
                     ownerflag = jObject.getBoolean("owner_flag");
@@ -242,7 +243,6 @@ public class ViewStreamActivity extends ActionBarActivity {
     }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        //在欢迎界面屏蔽BACK键
         if(keyCode==KeyEvent.KEYCODE_BACK) {
             Intent intent = new Intent(this, ViewAllStream.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
