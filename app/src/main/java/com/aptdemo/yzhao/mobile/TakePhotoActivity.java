@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -20,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 public class TakePhotoActivity extends ActionBarActivity {
     private static final String TAG = "Take private photo";
     Context context = this;
+    private String userEmail;
     private Button TakePhotoBtn;
     private Button UsePhotoBtn;
     private Button ReturnToStreamsBtn;
@@ -39,8 +42,9 @@ public class TakePhotoActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        requestWindowFeature(Window.FEATURE_NO_TITLE); // remove title from window
         setContentView(R.layout.activity_take_photo);
+        userEmail = getIntent().getStringExtra(Consts.USER_EMAIL_NAME);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TakePhotoBtn = (Button) findViewById(R.id.take_photo_take_picture);
         UsePhotoBtn = (Button) findViewById(R.id.take_photo_use_picture);
@@ -90,8 +94,10 @@ public class TakePhotoActivity extends ActionBarActivity {
     View.OnClickListener returnToStreamsHandler = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent listStreamsIntent = new Intent(context, ListStreams.class); //TODO: should prevent returning to take photo after moving to startActivity
-            startActivity(listStreamsIntent);
+            Intent viewAllStreamIntent = new Intent(context, ViewAllStream.class); //TODO: should prevent returning to take photo after moving to startActivity
+            viewAllStreamIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            viewAllStreamIntent.putExtra(Consts.USER_EMAIL_NAME, userEmail);
+            startActivity(viewAllStreamIntent);
         }
     };
 
@@ -110,7 +116,7 @@ public class TakePhotoActivity extends ActionBarActivity {
                 boolean opened = safeCameraOpen(cameraId);
                 if (opened){
                     //mPhotoPreview = new PhotoPreview(context);
-                    mPhotoPreview.refreshCamera(mCamera);
+                    mPhotoPreview.refreshCamera(mCamera, cameraId);
                     CameraFrameLayout.addView(mPhotoPreview);
                 } else {
                     Toast.makeText(context, "Fail to open camera", Toast.LENGTH_SHORT);
@@ -146,16 +152,35 @@ public class TakePhotoActivity extends ActionBarActivity {
         public void onPictureTaken(byte[] data, Camera camera) {
             //add writing to file
             if (data != null && data.length > 0){
+                if(currentPhoto != null){
+                    currentPhoto.recycle();
+                }
+                if(drawablePhoto != null){
+                    drawablePhoto.recycle();
+                }
                 BitmapFactory.Options opts = new BitmapFactory.Options();
                 opts.inSampleSize = 4;
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
                 currentPhoto = BitmapFactory.decodeByteArray(data, 0, data.length, opts); // picture is too large....
+                int rotation = mPhotoPreview.getDisplayOrientation();
                 currentPhoto.compress(Bitmap.CompressFormat.JPEG, Consts.PHOTO_QUALITY, os);
                 byte[] array = os.toByteArray();
                 currentPhoto.recycle();
                 currentPhoto = BitmapFactory.decodeByteArray(array, 0, array.length);
-                if(drawablePhoto != null){
-                    drawablePhoto.recycle();
+                if (rotation != 0){
+                    Bitmap oldBitmap = currentPhoto;
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(rotation);
+                    currentPhoto = Bitmap.createBitmap(
+                            oldBitmap,
+                            0,
+                            0,
+                            oldBitmap.getWidth(),
+                            oldBitmap.getHeight(),
+                            matrix,
+                            false
+                    );
+                    oldBitmap.recycle();
                 }
                 drawablePhoto = currentPhoto.copy(Bitmap.Config.ARGB_8888, true);
                 UsePhotoBtn.setVisibility(View.VISIBLE);
@@ -184,7 +209,7 @@ public class TakePhotoActivity extends ActionBarActivity {
         }
         Log.w(TAG, "preview null: " + Boolean.toString(mPhotoPreview == null));
         Log.w(TAG, "camera null: " + Boolean.toString(mCamera == null));
-        mPhotoPreview.refreshCamera(mCamera);
+        mPhotoPreview.refreshCamera(mCamera, cameraId);
     }
 
     @Override

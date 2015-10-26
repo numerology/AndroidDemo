@@ -84,7 +84,8 @@ public class ViewSubscribed extends ActionBarActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         //在欢迎界面屏蔽BACK键
         if(keyCode==KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(this, Homepage.class);
+            Intent intent = new Intent(this, ViewAllStream.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             finish();
             return true;

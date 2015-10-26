@@ -41,6 +41,7 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
     private static final int PICK_IMAGE = 1;
     private static final int TAKE_PHOTO = 2;
     private static final int PRIVATE_TAKE_PHOTO = 3;
+    private String userEmail;
 
     Context context = this;
     private LocationClient currentLocation;
@@ -50,11 +51,17 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
     private ImageView mImageView;
     private Bitmap bitmapImage;
 
+    private Button uploadButton;
+    private Button chooseFromLibraryButton;
+    private Button takePhotoBtn;
+    private Button takePrivatePhotoBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         currentIntent = getIntent();
 
         streamName = currentIntent.getStringExtra("stream_name");
+        userEmail = currentIntent.getStringExtra(Consts.USER_EMAIL_NAME);
         Log.w(TAG, "stream name is" + streamName);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_upload);
@@ -73,9 +80,12 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
             streamAutoCompleteTextView.setAdapter(mAdapter);
         }
         // Choose image from library
-        Button chooseFromLibraryButton = (Button) findViewById(R.id.choose_from_library);
-        Button takePhotoBtn = (Button) findViewById(R.id.take_photo);
-        Button takePrivatePhotoBtn = (Button) findViewById(R.id.private_take_photo);
+        chooseFromLibraryButton = (Button) findViewById(R.id.choose_from_library);
+        takePhotoBtn = (Button) findViewById(R.id.take_photo);
+        takePrivatePhotoBtn = (Button) findViewById(R.id.private_take_photo);
+        uploadButton = (Button) findViewById(R.id.upload_to_server);
+        uploadButton.setVisibility(View.GONE);
+
         chooseFromLibraryButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -106,6 +116,7 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
                     @Override
                     public void onClick(View v){
                         Intent takePrivatePhotoIntent = new Intent(context, TakePhotoActivity.class);
+                        takePrivatePhotoIntent.putExtra(Consts.USER_EMAIL_NAME, userEmail);
                         startActivityForResult(takePrivatePhotoIntent, PRIVATE_TAKE_PHOTO);
                     }
                 }
@@ -217,7 +228,7 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
 
             // Enable the upload button once image has been uploaded
 
-            Button uploadButton = (Button) findViewById(R.id.upload_to_server);
+            uploadButton.setVisibility(View.VISIBLE);
             uploadButton.setClickable(true);
 
             uploadButton.setOnClickListener(
@@ -248,7 +259,7 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
             mImageView = (ImageView) findViewById(R.id.thumbnail);
             bitmapImage = (Bitmap) extras.get("data");
             mImageView.setImageBitmap(bitmapImage);
-            Button uploadButton = (Button) findViewById(R.id.upload_to_server);
+            uploadButton.setVisibility(View.VISIBLE);
             uploadButton.setClickable(true);
             uploadButton.setOnClickListener(
                     new View.OnClickListener() {
@@ -280,7 +291,7 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
             byte[] array = (byte[]) extras.get("data");
             bitmapImage =  BitmapFactory.decodeByteArray(array, 0, array.length);
             mImageView.setImageBitmap(bitmapImage);
-            Button uploadButton = (Button) findViewById(R.id.upload_to_server);
+            uploadButton.setVisibility(View.VISIBLE);
             uploadButton.setClickable(true);
             uploadButton.setOnClickListener(
                     new View.OnClickListener() {
@@ -358,13 +369,6 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
         });
     }
 
-
-
-    public void viewAllImages(View view){
-        Intent intent= new Intent(this, DisplayImages.class);
-
-        startActivity(intent);
-    }
 
     @Override
     public void onPause(){

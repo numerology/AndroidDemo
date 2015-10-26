@@ -17,23 +17,21 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
 
-    <uses-feature android:name="android.hardware.Camera" />
-
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/welcome"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.aptdemo.yzhao.com.connexus.mobile.Homepage"
+            android:name="com.aptdemo.yzhao.mobile.Homepage"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.aptdemo.yzhao.com.connexus.mobile.DisplayImages"
+            android:name="com.aptdemo.yzhao.mobile.DisplayImages"
             android:label="@string/title_activity_display_images" >
         </activity>
         <activity
-            android:name="com.aptdemo.yzhao.com.connexus.mobile.ImageUpload"
+            android:name="com.aptdemo.yzhao.mobile.ImageUpload"
             android:label="@string/title_activity_image_upload" >
         </activity>
 
@@ -42,16 +40,19 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name="com.aptdemo.yzhao.com.connexus.mobile.ListStreams"
+            android:name=".ListStreams"
             android:label="@string/title_activity_list_streams" >
         </activity>
         <activity
-            android:name="com.aptdemo.yzhao.com.connexus.mobile.ViewStreamActivity"
+            android:name=".ViewStreamActivity"
             android:label="@string/title_activity_view_stream" >
         </activity>
         <activity
-            android:name="com.aptdemo.yzhao.com.connexus.mobile.WelcomeActivity"
-            android:label="@string/title_activity_welcome" >
+
+
+            android:name=".WelcomeActivity"
+            android:label="@string/app_name" >
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -59,28 +60,32 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.aptdemo.yzhao.com.connexus.mobile.ViewNearby"
+            android:name="ViewNearby"
             android:label="@string/title_activity_view_nearby" >
         </activity>
         <activity
-            android:name="com.aptdemo.yzhao.com.connexus.mobile.SearchStream"
+            android:name="SearchStream"
             android:label="@string/title_activity_search_stream" >
         </activity>
         <activity
-            android:name="com.aptdemo.yzhao.com.connexus.mobile.TakePhotoActivity"
+            android:name=".TakePhotoActivity"
             android:label="@string/title_activity_take_photo"
-            android:parentActivityName="com.aptdemo.yzhao.com.connexus.mobile.ImageUpload" >
+            android:parentActivityName=".ImageUpload" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.aptdemo.yzhao.com.connexus.mobile.ImageUpload" />
+                android:value=".ImageUpload" />
         </activity>
         <activity
-            android:name="com.aptdemo.yzhao.com.connexus.mobile.ViewSubscribed"
+            android:name=".ViewSubscribed"
             android:label="@string/title_activity_view_subscribed" >
         </activity>
         <activity
+
+
+
             android:name=".Landing"
-            android:label="@string/title_activity_landing" >
+            android:label="@string/title_activity_view_all_stream" >
+
         </activity>
     </application>
 
