@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.content.Context;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -30,24 +32,47 @@ import java.util.ArrayList;
 
 public class ViewStreamActivity extends ActionBarActivity {
     private String TAG = "View Stream";
+    private final int IMAGE_PER_PAGE = Consts.VIEW_A_STREAM_PER_PAGE;
     Context context = this;
-    String streamName;
     private boolean ownerflag;
     private Button uploadBtn;
+    private TextView streamNameTextView;
+    private GridView mGridView;
+    private LinearLayout mLinearLayout;
+    private Button mPrePageButton;
+    private Button mNextPageButton;
+    private Button streamsButton;
+
+    String streamName;
     private String userEmail;
     private String streamID;
+    ArrayList<String> imageURLs = new ArrayList<String>();
+    ArrayList<String> pageImageURLs = new ArrayList<String>();
+
+    int currentPage = 0; // current page of results shown
+    private int totalPage = 0;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_stream);
 
         uploadBtn = (Button) findViewById(R.id.open_image_upload_page);
+        streamNameTextView = (TextView) findViewById(R.id.view_a_stream_stream_name);
+        mGridView = (GridView) findViewById(R.id.view_a_stream_gridview);
+        mLinearLayout = (LinearLayout) findViewById(R.id.view_a_stream_navigate);
+        mPrePageButton = (Button) findViewById(R.id.view_a_stream_pre_page);
+        mPrePageButton.setOnClickListener(prePageHandler);
+        mNextPageButton = (Button) findViewById(R.id.view_a_stream_next_page);
+        mNextPageButton.setOnClickListener(nextPageHandler);
+        streamsButton = (Button) findViewById(R.id.view_a_stream_all_streams);
+        streamsButton.setOnClickListener(viewStreamsHandler);
+
         Intent currentIntent = getIntent();
         userEmail = currentIntent.getStringExtra("user_email");
         streamID = currentIntent.getStringExtra("stream_id");
 
         System.out.println("on creating view stream");
-
     }
 
     public void uploadImage(View view){
@@ -72,16 +97,17 @@ public class ViewStreamActivity extends ActionBarActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
 
-                final ArrayList<String> imageURLs = new ArrayList<String>();
                 try {
                     JSONObject jObject = new JSONObject(new String(response));
                     JSONArray imgUrl = jObject.getJSONArray("image_url");
                     streamName = jObject.getString("stream_name");
+                    setStreamName();
                     ownerflag = jObject.getBoolean("owner_flag");
-                    Log.d(TAG,"ownerflag= "+ownerflag);
+                    Log.d(TAG, "ownerflag= " + ownerflag);
 
                     uploadBtn.setEnabled(ownerflag);
-                    if(ownerflag){
+                    if (ownerflag) {
+                        uploadBtn.setVisibility(View.VISIBLE);
                         uploadBtn.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -91,30 +117,15 @@ public class ViewStreamActivity extends ActionBarActivity {
                     }
 
 
-
                     for (int i = 0; i < imgUrl.length(); i++) {
                         imageURLs.add(imgUrl.getString(i));
                     }
 
-                    GridView gridview = (GridView) findViewById(R.id.singleStreamGrid);
-                    gridview.setAdapter(new ImageAdapter(context, imageURLs));
-                    gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View v,
-                                                int position, long id) {
+                    currentPage = 1;
+                    totalPage = (int) Math.ceil(Double.valueOf(Integer.toString(imageURLs.size())) / Double.valueOf(Integer.toString(IMAGE_PER_PAGE)));
+                    showSearchResult(currentPage);
 
-                            Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
 
-                            Dialog imageDialog = new Dialog(context);
-                            imageDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                            imageDialog.setContentView(R.layout.thumbnail);
-                            ImageView image = (ImageView) imageDialog.findViewById(R.id.thumbnail_IMAGEVIEW);
-
-                            Picasso.with(context).load(imageURLs.get(position)).into(image);
-
-                            imageDialog.show();
-                        }
-                    });
 
                 } catch (JSONException j) {
                     System.out.println("JSON Error in View Stream");
@@ -129,11 +140,102 @@ public class ViewStreamActivity extends ActionBarActivity {
 
     }
 
+    private void showSearchResult(int page){
+        if (totalPage == 0){
+            Log.w(TAG, "total page is zero");
+            mGridView.setAdapter(new ImageAdapter(context, imageURLs));
+            mGridView.invalidateViews();
+            return;
+        }
+        if(page <= 0){
+            Log.e(TAG, "show search result: page number too small");
+            return;
+        }
+        if (page > totalPage){
+            Log.w(TAG, "show search result: page number too large");
+            return;
+        }
+        if (totalPage == 1){
+            mLinearLayout.setVisibility(View.GONE);
+        }else{
+            mLinearLayout.setVisibility(View.VISIBLE);
+            if (page < totalPage){
+                mNextPageButton.setVisibility(View.VISIBLE);
+            } else {
+                mNextPageButton.setVisibility(View.INVISIBLE);
+            }
+            if (page == 1){
+                mPrePageButton.setVisibility(View.INVISIBLE);
+            }else{
+                mPrePageButton.setVisibility(View.VISIBLE);
+            }
+        }
+        pageImageURLs.clear();
+        int startStreamNum = (page - 1)*IMAGE_PER_PAGE;
+        int endStreamNum = (int) Math.min(page*IMAGE_PER_PAGE, imageURLs.size());
+        for (int i = startStreamNum; i < endStreamNum ; i++){
+            pageImageURLs.add(imageURLs.get(i));
+        }
+        Log.w(TAG, "# of images loaded is " + Integer.toString(pageImageURLs.size()));
+        mGridView.setAdapter(new ImageAdapter(context, pageImageURLs));
+        mGridView.invalidateViews();
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
+                Dialog imageDialog = new Dialog(context);
+                imageDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                imageDialog.setContentView(R.layout.thumbnail);
+                ImageView image = (ImageView) imageDialog.findViewById(R.id.thumbnail_IMAGEVIEW);
+                Picasso.with(context).load(pageImageURLs.get(position)).into(image);
+                imageDialog.show();
+            }
+        });
+    }
+
+    View.OnClickListener prePageHandler = new View.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            if (currentPage > 1){
+                currentPage = currentPage - 1;
+                showSearchResult(currentPage);
+            }
+        }
+    };
+    View.OnClickListener nextPageHandler = new View.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            if (currentPage < totalPage){
+                currentPage = currentPage + 1;
+                showSearchResult(currentPage);
+            }
+        }
+    };
+    View.OnClickListener viewStreamsHandler = new View.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            Intent viewStreamsIntent = new Intent(context, ViewAllStream.class);
+            viewStreamsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(viewStreamsIntent);
+            finish();
+        }
+    };
+    public void setStreamName(){
+        if (streamName != null && !streamName.isEmpty()){
+            StringBuilder sb = new StringBuilder("View a Stream ");
+            sb.append(streamName);
+            streamNameTextView.setText(sb.toString());
+        } else {
+            streamNameTextView.setText("Fail to find stream name");
+        }
+    }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         //在欢迎界面屏蔽BACK键
         if(keyCode==KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(this, Homepage.class);
+            Intent intent = new Intent(this, ViewAllStream.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             finish();
             return true;

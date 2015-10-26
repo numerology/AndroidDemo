@@ -78,6 +78,10 @@
             android:name=".ViewSubscribed"
             android:label="@string/title_activity_view_subscribed" >
         </activity>
+        <activity
+            android:name=".ViewAllStream"
+            android:label="@string/title_activity_view_all_stream" >
+        </activity>
     </application>
 
 </manifest>

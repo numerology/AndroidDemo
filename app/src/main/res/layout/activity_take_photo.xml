@@ -10,10 +10,10 @@
         android:id="@+id/take_photo_banner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="40dp"
+        android:textSize="@dimen/banner_font"
         android:gravity="center"
         android:textAlignment="gravity"
-        android:text="@string/banner_take_private_photo"/>
+        android:text="@string/connexus_banner"/>
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/take_photo_camera_layout"
@@ -55,6 +55,6 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:text="@string/take_private_photo_return_to_streams"/>
+        android:text="@string/view_all_streams"/>
 
 </RelativeLayout>

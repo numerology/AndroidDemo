@@ -34,7 +34,7 @@ import com.loopj.android.http.*;
 public class DisplayImages extends ActionBarActivity {
     Context context = this;
     private String TAG  = "Display Images";
-
+    private GridView mGridView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +59,9 @@ public class DisplayImages extends ActionBarActivity {
                         imageCaps.add(displayCaption.getString(i));
                         System.out.println(displayImages.getString(i));
                     }
-                    GridView gridview = (GridView) findViewById(R.id.gridview);
-                    gridview.setAdapter(new ImageAdapter(context,imageURLs));
-                    gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    mGridView= (GridView) findViewById(R.id.gridview);
+                    mGridView.setAdapter(new ImageAdapter(context,imageURLs));
+                    mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View v,
                                                 int position, long id) {

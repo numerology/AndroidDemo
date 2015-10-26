@@ -98,8 +98,9 @@ public class TakePhotoActivity extends ActionBarActivity {
     View.OnClickListener returnToStreamsHandler = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent listStreamsIntent = new Intent(context, ListStreams.class); //TODO: should prevent returning to take photo after moving to startActivity
-            startActivity(listStreamsIntent);
+            Intent viewAllStreamIntent = new Intent(context, ViewAllStream.class); //TODO: should prevent returning to take photo after moving to startActivity
+            viewAllStreamIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(viewAllStreamIntent);
         }
     };
 

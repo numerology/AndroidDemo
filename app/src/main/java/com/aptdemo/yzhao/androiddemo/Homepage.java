@@ -253,7 +253,11 @@ public class Homepage extends ActionBarActivity implements
         mStatus.setText(email + " is currently Signed In");
         userEmail = email.toString();
         System.out.println(email);
-
+        //TODO: check whether this is correct
+        Intent viewAllStreamIntent = new Intent(context, ViewAllStream.class);
+        viewAllStreamIntent.putExtra(Consts.USER_EMAIL_NAME, userEmail);
+        startActivity(viewAllStreamIntent);
+        //TODO: should we use finish() here?
     }
 
     /* onConnectionFailed is called when our Activity could not connect to Google
@@ -438,7 +442,7 @@ public class Homepage extends ActionBarActivity implements
     }
 
     public void viewAllStreams(View view){
-        Intent intent= new Intent(this, ListStreams.class);
+        Intent intent= new Intent(this, ViewAllStream.class);
         intent.putExtra("user_email", userEmail);
         startActivity(intent);
     }
