@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
@@ -114,11 +115,15 @@ public class ViewAllStream extends ActionBarActivity {
     private void refreshGridView(){ // update streams according to showSubscribeState
         Log.d(TAG, "refreshGridView runs");
         String request_url = Consts.API_STREAM_LIST_URL;
+        RequestParams params = new RequestParams();
         if (showSubscribeState == SubscribeStream.SUBSCRIBE_STREAM){
             request_url = Consts.API_STREAM_SUBSCRIBED_URL; //TODO: send max number of stream to return ?
+            params.put("user_email", userEmail);
+            Log.d(TAG, "requesting useremail= " + userEmail);
         }
         AsyncHttpClient httpClient = new AsyncHttpClient();
-        httpClient.get(request_url, new AsyncHttpResponseHandler() {
+
+        httpClient.get(request_url, params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 Log.d(TAG, "get data from server");
