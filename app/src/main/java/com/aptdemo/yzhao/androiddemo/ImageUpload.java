@@ -47,6 +47,7 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
     private static final int PICK_IMAGE = 1;
     private static final int TAKE_PHOTO = 2;
     private static final int PRIVATE_TAKE_PHOTO = 3;
+    private String userEmail;
 
     Context context = this;
     private LocationClient currentLocation;
@@ -66,6 +67,7 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
         currentIntent = getIntent();
 
         streamName = currentIntent.getStringExtra("stream_name");
+        userEmail = currentIntent.getStringExtra(Consts.USER_EMAIL_NAME);
         Log.w(TAG, "stream name is" + streamName);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_upload);
@@ -120,6 +122,7 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
                     @Override
                     public void onClick(View v){
                         Intent takePrivatePhotoIntent = new Intent(context, TakePhotoActivity.class);
+                        takePrivatePhotoIntent.putExtra(Consts.USER_EMAIL_NAME, userEmail);
                         startActivityForResult(takePrivatePhotoIntent, PRIVATE_TAKE_PHOTO);
                     }
                 }
@@ -372,13 +375,6 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
         });
     }
 
-
-
-    public void viewAllImages(View view){
-        Intent intent= new Intent(this, DisplayImages.class);
-
-        startActivity(intent);
-    }
 
     @Override
     public void onPause(){

@@ -57,13 +57,14 @@ public class ViewAllStream extends ActionBarActivity {
         showSubscribeBtn.setText(Consts.SUBSCRIBE_BUTTON_SHOW_SUBSCRIBE);
     }
     @Override
-    public void onStart(){ // TODO: current plan is to check loggin state in onStart
+    public void onStart(){ // TODO: current plan is to check loggin state in onStart, should be deleted
         super.onStart();
         Log.d(TAG, "started, loggedin state is " + Boolean.toString(isLoggedIn()));
     }
     @Override
     public void onResume(){ //  get the streams back
         super.onResume();
+        Log.d(TAG, "userEmail: " + userEmail);
         refreshGridView();
     }
 
@@ -147,7 +148,7 @@ public class ViewAllStream extends ActionBarActivity {
                             Toast.makeText(context, "Checking single stream", Toast.LENGTH_SHORT).show();
                             Intent viewStreamIntent = new Intent(context, ViewStreamActivity.class);
                             viewStreamIntent.putExtra("stream_id",streamIDs.get(position));
-                            viewStreamIntent.putExtra("user_email",userEmail);
+                            viewStreamIntent.putExtra(Consts.USER_EMAIL_NAME,userEmail);
                             startActivity(viewStreamIntent);
                         }
                     });

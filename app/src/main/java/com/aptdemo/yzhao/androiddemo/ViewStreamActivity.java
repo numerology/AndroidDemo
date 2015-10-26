@@ -48,9 +48,10 @@ public class ViewStreamActivity extends ActionBarActivity {
     private String streamID;
     ArrayList<String> imageURLs = new ArrayList<String>();
     ArrayList<String> pageImageURLs = new ArrayList<String>();
+    ImageAdapter mImageAdapter = null;
 
     int currentPage = 0; // current page of results shown
-    private int totalPage = 0;
+    int totalPage = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,7 +70,8 @@ public class ViewStreamActivity extends ActionBarActivity {
         streamsButton.setOnClickListener(viewStreamsHandler);
 
         Intent currentIntent = getIntent();
-        userEmail = currentIntent.getStringExtra("user_email");
+        userEmail = currentIntent.getStringExtra(Consts.USER_EMAIL_NAME);
+        Log.d(TAG, "email is: "+userEmail.toString());
         streamID = currentIntent.getStringExtra("stream_id");
 
         System.out.println("on creating view stream");
@@ -78,6 +80,7 @@ public class ViewStreamActivity extends ActionBarActivity {
     public void uploadImage(View view){
         Intent intent= new Intent(this, ImageUpload.class);
         intent.putExtra("stream_name", streamName);
+        intent.putExtra(Consts.USER_EMAIL_NAME, userEmail);
         startActivity(intent);
     }
     @Override
@@ -123,9 +126,7 @@ public class ViewStreamActivity extends ActionBarActivity {
 
                     currentPage = 1;
                     totalPage = (int) Math.ceil(Double.valueOf(Integer.toString(imageURLs.size())) / Double.valueOf(Integer.toString(IMAGE_PER_PAGE)));
-                    showSearchResult(currentPage);
-
-
+                    showImagePage(currentPage);
 
                 } catch (JSONException j) {
                     System.out.println("JSON Error in View Stream");
@@ -140,10 +141,13 @@ public class ViewStreamActivity extends ActionBarActivity {
 
     }
 
-    private void showSearchResult(int page){
+    private void showImagePage(int page){
         if (totalPage == 0){
             Log.w(TAG, "total page is zero");
-            mGridView.setAdapter(new ImageAdapter(context, imageURLs));
+            pageImageURLs.clear();
+            if (mImageAdapter != null){
+                mImageAdapter.notifyDataSetChanged();
+            }
             mGridView.invalidateViews();
             return;
         }
@@ -176,14 +180,19 @@ public class ViewStreamActivity extends ActionBarActivity {
         for (int i = startStreamNum; i < endStreamNum ; i++){
             pageImageURLs.add(imageURLs.get(i));
         }
+        if (mImageAdapter == null){
+            mImageAdapter = new ImageAdapter(context, pageImageURLs);
+        }else{
+            mImageAdapter.notifyDataSetChanged();
+        }
         Log.w(TAG, "# of images loaded is " + Integer.toString(pageImageURLs.size()));
-        mGridView.setAdapter(new ImageAdapter(context, pageImageURLs));
+        mGridView.setAdapter(mImageAdapter);
         mGridView.invalidateViews();
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
                 Dialog imageDialog = new Dialog(context);
                 imageDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 imageDialog.setContentView(R.layout.thumbnail);
@@ -199,7 +208,7 @@ public class ViewStreamActivity extends ActionBarActivity {
         public void onClick(View v){
             if (currentPage > 1){
                 currentPage = currentPage - 1;
-                showSearchResult(currentPage);
+                showImagePage(currentPage);
             }
         }
     };
@@ -208,7 +217,7 @@ public class ViewStreamActivity extends ActionBarActivity {
         public void onClick(View v){
             if (currentPage < totalPage){
                 currentPage = currentPage + 1;
-                showSearchResult(currentPage);
+                showImagePage(currentPage);
             }
         }
     };
@@ -217,6 +226,7 @@ public class ViewStreamActivity extends ActionBarActivity {
         public void onClick(View v){
             Intent viewStreamsIntent = new Intent(context, ViewAllStream.class);
             viewStreamsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            viewStreamsIntent.putExtra(Consts.USER_EMAIL_NAME, userEmail);
             startActivity(viewStreamsIntent);
             finish();
         }
@@ -236,6 +246,7 @@ public class ViewStreamActivity extends ActionBarActivity {
         if(keyCode==KeyEvent.KEYCODE_BACK) {
             Intent intent = new Intent(this, ViewAllStream.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra(Consts.USER_EMAIL_NAME, userEmail);
             startActivity(intent);
             finish();
             return true;

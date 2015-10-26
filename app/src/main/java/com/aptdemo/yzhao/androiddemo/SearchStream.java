@@ -55,6 +55,7 @@ public class SearchStream extends ActionBarActivity {//implements
     final private ArrayList<String> pageStreamNames = new ArrayList<String>();
     final private ArrayList<String> pageCoverUrls = new ArrayList<String>();
     final private ArrayList<String> pageStreamIds = new ArrayList<String>();
+    private ImageAdapter mImageAdapter = null;
 
     int currentPage = 0; // current page of results shown
     private int totalPage = 0;
@@ -68,7 +69,7 @@ public class SearchStream extends ActionBarActivity {//implements
         setContentView(R.layout.activity_search_stream);
         Intent intent = getIntent();
         keywords = intent.getStringExtra(Consts.KEYWORD_NAME);
-        userEmail = intent.getStringExtra("user_email");
+        userEmail = intent.getStringExtra(Consts.USER_EMAIL_NAME);
 
         mAutoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.search_text);
         mAutoCompleteTextView.setAdapter(new AutocompleteAdapter(this,android.R.layout.simple_dropdown_item_1line));
@@ -150,6 +151,7 @@ public class SearchStream extends ActionBarActivity {//implements
         if(keyCode==KeyEvent.KEYCODE_BACK) {
             Intent intent = new Intent(this, ViewAllStream.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // TODO: check whether this works, if works, apply to all activities
+            intent.putExtra(Consts.USER_EMAIL_NAME, userEmail);
             startActivity(intent);
             finish();
             return true;
@@ -160,7 +162,10 @@ public class SearchStream extends ActionBarActivity {//implements
     private void showSearchResult(int page){
         if (totalPage == 0){
             Log.w(TAG, "total page is zero");
-            mGridView.setAdapter(new ImageAdapter(context, coverUrls));
+            pageCoverUrls.clear();
+            if (mImageAdapter != null){
+                mImageAdapter.notifyDataSetChanged();
+            }
             mGridView.invalidateViews();
             return;
         }
@@ -197,14 +202,20 @@ public class SearchStream extends ActionBarActivity {//implements
             pageCoverUrls.add(coverUrls.get(i));
             pageStreamIds.add(streamIds.get(i));
         }
+        if (mImageAdapter == null){
+            mImageAdapter = new ImageAdapter(context, pageCoverUrls);
+            mGridView.setAdapter(mImageAdapter);
+        }
+        mImageAdapter.notifyDataSetChanged();
         Log.w(TAG, "# of images loaded is "+Integer.toString(pageCoverUrls.size()));
-        mGridView.setAdapter(new ImageAdapter(context, pageCoverUrls));
+        //mGridView.setAdapter(new ImageAdapter(context, pageCoverUrls));
         mGridView.invalidateViews();
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intentViewStream = new Intent(context, ViewStreamActivity.class);
                 intentViewStream.putExtra("stream_id", pageStreamIds.get(position));
+                intentViewStream.putExtra(Consts.USER_EMAIL_NAME, userEmail);
                 startActivity(intentViewStream);
             }
         });

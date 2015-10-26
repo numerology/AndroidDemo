@@ -70,9 +70,11 @@
     <!--Common Strings-->
     <string name="view_all_streams">Streams</string>
     <string name="connexus_banner">Connexus!</string>
-    <string name="image_pre_page">Pre page</string> <!--used to turn pages for images-->
-    <string name="image_next_page">More images</string>
+    <string name="image_pre_page">Pre Page</string> <!--used to turn pages for images-->
+    <string name="image_next_page">More Images</string>
     <string name="search_btn">Search</string>
+    <string name="stream_pre_page">Pre Page</string>
+    <string name="stream_next_page">More Streams</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

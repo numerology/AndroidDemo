@@ -28,6 +28,7 @@ import java.util.List;
 public class TakePhotoActivity extends ActionBarActivity {
     private static final String TAG = "Take private photo";
     Context context = this;
+    private String userEmail;
     private Button TakePhotoBtn;
     private Button UsePhotoBtn;
     private Button ReturnToStreamsBtn;
@@ -49,6 +50,7 @@ public class TakePhotoActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE); // remove title from window
         setContentView(R.layout.activity_take_photo);
+        userEmail = getIntent().getStringExtra(Consts.USER_EMAIL_NAME);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TakePhotoBtn = (Button) findViewById(R.id.take_photo_take_picture);
         UsePhotoBtn = (Button) findViewById(R.id.take_photo_use_picture);
@@ -100,6 +102,7 @@ public class TakePhotoActivity extends ActionBarActivity {
         public void onClick(View v) {
             Intent viewAllStreamIntent = new Intent(context, ViewAllStream.class); //TODO: should prevent returning to take photo after moving to startActivity
             viewAllStreamIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            viewAllStreamIntent.putExtra(Consts.USER_EMAIL_NAME, userEmail);
             startActivity(viewAllStreamIntent);
         }
     };

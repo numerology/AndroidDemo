@@ -4,6 +4,7 @@ package com.aptdemo.yzhao.androiddemo;
  * Created by Yicong on 10/23/15.
  */
 public final class Consts {
+    public static final String API_STREAM_NEARBY_URL = "http://just-plate-107116.appspot.com/mobile/stream_nearby";
     public static final String API_AUTOCOMPLETE_URL = "http://just-plate-107116.appspot.com/api/autocomplete";
     public static final String API_STREAM_AUTOCOMPLETE_URL = "http://just-plate-107116.appspot.com/api/stream_autocomplete";
     public static final String API_SEARCH_STREAM_URL = "http://just-plate-107116.appspot.com/api/mobile_search";
@@ -22,6 +23,7 @@ public final class Consts {
     public static final int SEARCH_STREAM_PER_PAGE = 6;
     public static final int VIEW_A_STREAM_PER_PAGE = 6;
     public static final int VIEW_ALL_STREAM_PER_PAGE = 6;
+    public static final int NEARBY_PER_PAGE = 6;
 
     public static final String KEYWORD_NAME = "keywords"; // name of keywords for passing parameters between activities
     public static final String USER_EMAIL_NAME = "user_email";
