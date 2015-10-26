@@ -56,7 +56,7 @@
     <string name="search_next_page">More results</string>
 
     <!--Strings for image upload-->
-    <string name="private_take_photo">Private Take a photo</string>
+    <string name="private_take_photo">Take a Photo</string>
     <string name="uploadImage">Upload Image</string>
     <string name="upload_hint">Stream Name</string>
     <string name="take_photo">Take a Picture</string>
