@@ -235,8 +235,11 @@ public class Homepage extends ActionBarActivity implements
 
         // Update the user interface to reflect that the user is signed in.
         mSignInButton.setEnabled(false);
+        mSignInButton.setVisibility(View.GONE);
         mSignOutButton.setEnabled(true);
+        mSignOutButton.setVisibility(View.VISIBLE);
         mRevokeButton.setEnabled(true);
+        mRevokeButton.setVisibility(View.VISIBLE);
 
         mAllStreamBtn.setEnabled(true);
         mNearbyStreamBtn.setEnabled(true);
@@ -409,10 +412,13 @@ public class Homepage extends ActionBarActivity implements
     private void onSignedOut() {
         // Update the UI to reflect that the user is signed out.
         mSignInButton.setEnabled(true);
+        mSignInButton.setVisibility(View.VISIBLE);
         mSignOutButton.setEnabled(false);
+        mSignOutButton.setVisibility(View.GONE);
         mRevokeButton.setEnabled(false);
+        mRevokeButton.setVisibility(View.GONE);
 
-        mAllStreamBtn.setEnabled(false);
+        mAllStreamBtn.setEnabled(true);
         mNearbyStreamBtn.setEnabled(false);
         mSearchBtn.setEnabled(true);
         userEmail = "";
@@ -443,7 +449,7 @@ public class Homepage extends ActionBarActivity implements
 
     public void viewAllStreams(View view){
         Intent intent= new Intent(this, ViewAllStream.class);
-        intent.putExtra("user_email", userEmail);
+        intent.putExtra(Consts.USER_EMAIL_NAME, userEmail);
         startActivity(intent);
     }
 

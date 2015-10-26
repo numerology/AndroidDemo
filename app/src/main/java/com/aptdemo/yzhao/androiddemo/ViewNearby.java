@@ -63,6 +63,7 @@ public class ViewNearby extends ActionBarActivity implements GooglePlayServicesC
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_view_nearby);
 
         mGridView = (GridView) findViewById(R.id.nearby_gridview);
@@ -230,6 +231,9 @@ public class ViewNearby extends ActionBarActivity implements GooglePlayServicesC
         }
         pageStreamIds.clear();
         pageCoverUrls.clear();
+        if (mImageAdapter != null) {
+            mImageAdapter.notifyDataSetChanged();
+        }
         int startStreamNum = (page - 1)*IMAGE_PER_PAGE;
         int endStreamNum = (int) Math.min(page*IMAGE_PER_PAGE, coverUrls.size());
         for (int i = startStreamNum; i < endStreamNum ; i++) {
