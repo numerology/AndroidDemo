@@ -1,9 +1,8 @@
-package com.aptdemo.yzhao.androiddemo;
+package com.aptdemo.yzhao.mobile;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Window;
 import android.view.WindowManager;

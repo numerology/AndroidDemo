@@ -1,4 +1,4 @@
-package com.aptdemo.yzhao.androiddemo;
+package com.aptdemo.yzhao.mobile;
 
 /**
  * Created by Yicong on 10/23/15.

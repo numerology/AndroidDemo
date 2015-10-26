@@ -1,4 +1,4 @@
-package com.aptdemo.yzhao.androiddemo;
+package com.aptdemo.yzhao.mobile;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -7,7 +7,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;

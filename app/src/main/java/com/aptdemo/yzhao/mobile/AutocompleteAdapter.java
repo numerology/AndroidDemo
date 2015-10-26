@@ -1,4 +1,4 @@
-package com.aptdemo.yzhao.androiddemo;
+package com.aptdemo.yzhao.mobile;
 
 import android.content.Context;
 import android.widget.ArrayAdapter;

@@ -64,17 +64,17 @@
             android:layout_height="wrap_content"
             android:text="@string/streamPage"
             android:onClick="viewAllStreams"
-            android:enabled="false"
+            android:enabled="true"
             />
 
         <Button
-            android:id="@+id/view_nearby_streams"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/nearbyPage"
-            android:onClick="viewNearStreams"
-            android:enabled="false"
-            />
+        android:id="@+id/view_nearby_streams"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/nearbyPage"
+        android:onClick="viewNearStreams"
+        android:enabled="false"
+        />
 
         <Button
             android:id="@+id/search_btn"
@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:text="@string/searchPage"
             android:onClick="searchStreams"
-            android:enabled="true"
+            android:enabled="false"
             />
 
 
