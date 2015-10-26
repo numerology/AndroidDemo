@@ -1,4 +1,4 @@
-package com.aptdemo.yzhao.mobile;
+package com.aptdemo.yzhao.androiddemo;
 
 import android.content.Context;
 import android.content.Intent;

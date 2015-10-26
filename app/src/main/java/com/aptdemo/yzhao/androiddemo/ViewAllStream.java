@@ -1,4 +1,4 @@
-package com.aptdemo.yzhao.mobile;
+package com.aptdemo.yzhao.androiddemo;
 
 import android.content.Context;
 import android.content.Intent;
@@ -44,7 +44,7 @@ public class ViewAllStream extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all_stream);
-        userEmail = getIntent().getStringExtra("user_email");
+        userEmail = getIntent().getStringExtra(Consts.USER_EMAIL_NAME);
         mGridView = (GridView) findViewById(R.id.view_all_streams_gridview);
         mSearchText = (AutoCompleteTextView) findViewById(R.id.view_all_streams_search_text);
         mSearchText.setAdapter(new AutocompleteAdapter(this,android.R.layout.simple_dropdown_item_1line));
@@ -55,6 +55,7 @@ public class ViewAllStream extends ActionBarActivity {
         showSubscribeBtn = (Button) findViewById(R.id.view_all_streams_subscribe);
         showSubscribeBtn.setOnClickListener(showSubscribeHandler);
         showSubscribeBtn.setText(Consts.SUBSCRIBE_BUTTON_SHOW_SUBSCRIBE);
+        checkLoggedIn();
     }
     @Override
     public void onStart(){ // TODO: current plan is to check loggin state in onStart, should be deleted
@@ -111,6 +112,7 @@ public class ViewAllStream extends ActionBarActivity {
     };
 
     private void refreshGridView(){ // update streams according to showSubscribeState
+        Log.d(TAG, "refreshGridView runs");
         String request_url = Consts.API_STREAM_LIST_URL;
         if (showSubscribeState == SubscribeStream.SUBSCRIBE_STREAM){
             request_url = Consts.API_STREAM_SUBSCRIBED_URL; //TODO: send max number of stream to return ?
@@ -119,6 +121,7 @@ public class ViewAllStream extends ActionBarActivity {
         httpClient.get(request_url, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                Log.d(TAG, "get data from server");
                 if (mImageAdapter != null){
                     coverURLs.clear();
                     streamIDs.clear();
@@ -128,19 +131,24 @@ public class ViewAllStream extends ActionBarActivity {
                     JSONObject jObject = new JSONObject(new String(response));
                     JSONArray jcoverUrl = jObject.getJSONArray("cover_url");
                     JSONArray jid = jObject.getJSONArray("streams_id");
-
+                    Log.d(TAG, "jcoverUrl length: " + Integer.toString(jcoverUrl.length()));
                     for (int i = 0; i < Math.min(jcoverUrl.length(), Consts.VIEW_ALL_STREAM_PER_PAGE); i++){
-                        coverURLs.add(jcoverUrl.getString(i));
+                        if(jcoverUrl.getString(i).length()>1) {
+                            coverURLs.add(jcoverUrl.getString(i));
+                        }else
+                        {
+                            coverURLs.add(Consts.DEFAULT_COVER_URL);
+                        }
                         streamIDs.add(jid.getString(i));
                         //System.out.println("adding ID: " + jid.getString(i));
-                        //System.out.println("adding url: "+jcoverUrl.getString(i));
+                        System.out.println("adding url: "+jcoverUrl.getString(i));
                     }
                     if (mImageAdapter == null){
                         mImageAdapter = new ImageAdapter(context, coverURLs);
+                        mGridView.setAdapter(mImageAdapter);
                     }else{
                         mImageAdapter.notifyDataSetChanged();
                     }
-                    mGridView.setAdapter(mImageAdapter);
                     mGridView.invalidateViews();
                     mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
@@ -178,7 +186,8 @@ public class ViewAllStream extends ActionBarActivity {
         if (!isLoggedIn()){
             Toast.makeText(context, "Not logged in", Toast.LENGTH_SHORT);
             showSubscribeBtn.setEnabled(false);
-            showSubscribeState = SubscribeStream.SUBSCRIBE_STREAM;
+            showSubscribeBtn.setText(Consts.SUBSCRIBE_BUTTON_SHOW_SUBSCRIBE);
+            showSubscribeState = SubscribeStream.ALL; // YW: 10/26/2015: should view all instread of subscribe stream !!
         }
     }
 }

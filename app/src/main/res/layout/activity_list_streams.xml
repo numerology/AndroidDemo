@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.aptdemo.yzhao.mobile.DisplayImages">
+    tools:context="com.aptdemo.yzhao.androiddemo.DisplayImages">
 
     <TextView
         android:text="@string/streamListPage"

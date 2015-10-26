@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:scrollbars="vertical"
-    tools:context="com.aptdemo.yzhao.mobile.ImageUpload" >
+    tools:context="com.aptdemo.yzhao.androiddemo.ImageUpload" >
 
     <LinearLayout
         android:layout_width="match_parent"
