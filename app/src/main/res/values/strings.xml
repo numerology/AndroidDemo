@@ -13,6 +13,7 @@
     <string name="searchPage">Search Streams</string>
     <string name="uploadImageActivity"> Upload a new image</string>
     <string name="title_activity_image_upload">ImageUpload</string>
+    <string name="numOfCols">3</string>
 
 
 
@@ -70,6 +71,7 @@
     <!--Common Strings-->
     <string name="view_all_streams">Streams</string>
     <string name="connexus_banner">Connexus!</string>
+    <string name="nearbyBanner">View Nearby Streams</string>
     <string name="image_pre_page">Pre Page</string> <!--used to turn pages for images-->
     <string name="image_next_page">More Images</string>
     <string name="search_btn">Search</string>

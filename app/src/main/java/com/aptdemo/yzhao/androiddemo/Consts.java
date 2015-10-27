@@ -20,10 +20,10 @@ public final class Consts {
     public static final int PREVIEW_SIZE_MAX_WIDTH = 640;
 
     // Num of streams shown on one search page
-    public static final int SEARCH_STREAM_PER_PAGE = 6;
-    public static final int VIEW_A_STREAM_PER_PAGE = 6;
-    public static final int VIEW_ALL_STREAM_PER_PAGE = 6;
-    public static final int NEARBY_PER_PAGE = 6;
+    public static final int SEARCH_STREAM_PER_PAGE = 9;
+    public static final int VIEW_A_STREAM_PER_PAGE = 9;
+    public static final int VIEW_ALL_STREAM_PER_PAGE = 9;
+    public static final int NEARBY_PER_PAGE = 9;
 
     public static final String KEYWORD_NAME = "keywords"; // name of keywords for passing parameters between activities
     public static final String USER_EMAIL_NAME = "user_email";
