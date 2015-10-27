@@ -78,7 +78,8 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
             currentLocation = new LocationClient(this, this, this);
         }
         if (streamName != null && !streamName.isEmpty()) {
-            streamAutoCompleteTextView.setVisibility(View.GONE); //test passed 10/24 8:23pm
+            streamAutoCompleteTextView.setVisibility(View.VISIBLE); //test passed 10/24 8:23pm
+            streamAutoCompleteTextView.setText(streamName);
         } else {
             streamAutoCompleteTextView.setVisibility(View.VISIBLE);
             AutocompleteAdapter mAdapter = new AutocompleteAdapter(this, android.R.layout.simple_dropdown_item_1line);
