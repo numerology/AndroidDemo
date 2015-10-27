@@ -1,6 +1,7 @@
 package com.aptdemo.yzhao.androiddemo;
 
 
+import android.text.TextDirectionHeuristic;
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
 import android.content.Context;
@@ -14,15 +15,15 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class ImageAdapter extends BaseAdapter {
+public class ImageCaptionAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<String> imageURLs;
-
-//TODO: adding case when the url is unavailable
-    public ImageAdapter(Context c, ArrayList<String> imageURLs) {
+    private ArrayList<String> captions;
+    //TODO: adding case when the url is unavailable
+    public ImageCaptionAdapter(Context c, ArrayList<String> imageURLs, ArrayList<String> captions ) {
         mContext = c;
         this.imageURLs = imageURLs;
-
+        this.captions = captions;
     }
 
     public int getCount() {
@@ -42,18 +43,26 @@ public class ImageAdapter extends BaseAdapter {
         ImageView imageView;
         TextView textView;
         if (convertView == null) {  // if it's not recycled, initialize some attributes
-            imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(250, 250));
+            //   imageView = new ImageView(mContext);
+            //   imageView.setLayoutParams(new GridView.LayoutParams(250, 250));
+            //   imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+            LayoutInflater i = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = (View) i.inflate(R.layout.image_caption_view, parent, false);
+            imageView = (ImageView) convertView.findViewById(R.id.image);
+            textView = (TextView) convertView.findViewById(R.id.caption);
+            convertView.setLayoutParams(new GridView.LayoutParams(250, 250));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-
         } else {
-            imageView = (ImageView) convertView;
+            imageView = (ImageView) convertView.findViewById(R.id.image);
+            textView = (TextView) convertView.findViewById(R.id.caption);
         }
         if ((imageURLs.get(position)!=null && !imageURLs.get(position).isEmpty())) {
             Picasso.with(mContext).load(imageURLs.get(position)).into(imageView);
+            textView.setText(captions.get(position));
         }
-        return imageView;
+        return convertView;
     }
 
 }

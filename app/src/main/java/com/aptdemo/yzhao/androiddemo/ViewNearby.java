@@ -52,10 +52,12 @@ public class ViewNearby extends ActionBarActivity implements GooglePlayServicesC
 
     final private ArrayList<String> coverUrls = new ArrayList<String>();
     final private ArrayList<String> streamIds = new ArrayList<String>();
+    final private ArrayList<String> distance = new ArrayList<String>();
     final private ArrayList<String> pageCoverUrls = new ArrayList<String>();
     final private ArrayList<String> pageStreamIds = new ArrayList<String>();
+    final private ArrayList<String> pageDistance = new ArrayList<String>();
 
-    private ImageAdapter mImageAdapter = null;
+    private ImageCaptionAdapter mImageAdapter = null;
 
     int currentPage = 0; // current page of results shown
     int totalPage = 0;
@@ -109,10 +111,12 @@ public class ViewNearby extends ActionBarActivity implements GooglePlayServicesC
                     JSONObject jObject = new JSONObject(new String(response));
                     JSONArray jimgUrl = jObject.getJSONArray("image_url");
                     JSONArray jid = jObject.getJSONArray("stream_id");
+                    JSONArray jdist = jObject.getJSONArray("distance");
 
                     for (int i = 0; i < jimgUrl.length(); i++) {
                         coverUrls.add(jimgUrl.getString(i));
                         streamIds.add(jid.getString(i));
+                        distance.add(jdist.getString(i));
                         //System.out.println("adding ID: " + jid.getString(i));
                     }
                     currentPage = 1;
@@ -231,6 +235,7 @@ public class ViewNearby extends ActionBarActivity implements GooglePlayServicesC
         }
         pageStreamIds.clear();
         pageCoverUrls.clear();
+        pageDistance.clear();
         if (mImageAdapter != null) {
             mImageAdapter.notifyDataSetChanged();
         }
@@ -239,9 +244,10 @@ public class ViewNearby extends ActionBarActivity implements GooglePlayServicesC
         for (int i = startStreamNum; i < endStreamNum ; i++) {
             pageCoverUrls.add(coverUrls.get(i));
             pageStreamIds.add(streamIds.get(i));
+            pageDistance.add(distance.get(i));
         }
         if (mImageAdapter == null){
-            mImageAdapter = new ImageAdapter(context, pageCoverUrls);
+            mImageAdapter = new ImageCaptionAdapter(context, pageCoverUrls, pageDistance);
             mGridView.setAdapter(mImageAdapter);
         }
         mImageAdapter.notifyDataSetChanged();
