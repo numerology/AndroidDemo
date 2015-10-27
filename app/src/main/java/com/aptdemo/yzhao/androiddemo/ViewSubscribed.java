@@ -1,5 +1,6 @@
 package com.aptdemo.yzhao.androiddemo;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -8,11 +9,11 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.content.Context;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
@@ -21,18 +22,22 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class ListStreams extends ActionBarActivity {
+public class ViewSubscribed extends ActionBarActivity {
+
+
     private String TAG = "ListStreams";
     Context context = this;
-
+  //  private final String userEmail = getIntent().getStringExtra("user_email");
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_streams);
+        setContentView(R.layout.activity_view_subscribed);
         final String userEmail = getIntent().getStringExtra("user_email");
-        final String request_url = Consts.API_STREAM_LIST_URL;
+        final String request_url = Consts.API_STREAM_SUBSCRIBED_URL;
         AsyncHttpClient httpClient = new AsyncHttpClient();
-        httpClient.get(request_url, new AsyncHttpResponseHandler() {
+        RequestParams params = new RequestParams();
+        params.put("user_email",userEmail);
+        httpClient.get(request_url, params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response){
                 final ArrayList<String> coverURLs = new ArrayList<String>();
@@ -49,7 +54,7 @@ public class ListStreams extends ActionBarActivity {
                         System.out.println("adding ID: "+jid.getString(i));
                     }
 
-                    GridView gridview = (GridView) findViewById(R.id.streamGrid);
+                    GridView gridview = (GridView) findViewById(R.id.SubscribedStreamGrid);
                     gridview.setAdapter(new ImageAdapter(context,coverURLs));
                     gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
@@ -79,7 +84,8 @@ public class ListStreams extends ActionBarActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         //在欢迎界面屏蔽BACK键
         if(keyCode==KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(this, Homepage.class);
+            Intent intent = new Intent(this, ViewAllStream.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             finish();
             return true;

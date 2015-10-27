@@ -12,11 +12,30 @@
         android:orientation="vertical"
         tools:context=".Homepage">
 
+
+
+
+        <TextView
+            android:id="@+id/sign_in_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dip"
+            android:text="@string/status_signed_out" />
+
+        <TextView
+            android:text="@string/welcome"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="40sp"
+            android:paddingBottom = "40sp"
+            />
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="2dip">
+            android:padding="2dip"
+            android:layout_gravity="center">
 
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/sign_in_button"
@@ -40,38 +59,14 @@
                 android:enabled="false" />
 
         </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/sign_in_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dip"
-            android:text="@string/status_signed_out" />
-
-        <TextView
-            android:text="@string/welcome"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="40sp"
-            android:paddingBottom = "40sp"
-            />
-
-        <Button
-            android:id="@+id/view_all_images"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/imagePage"
-            android:onClick="viewAllImages"
-            />
-
         <Button
             android:id="@+id/view_all_streams"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:text="@string/streamPage"
             android:onClick="viewAllStreams"
+            android:enabled="true"
             />
 
         <Button
@@ -80,6 +75,8 @@
             android:layout_height="wrap_content"
             android:text="@string/nearbyPage"
             android:onClick="viewNearStreams"
+            android:enabled="false"
+            android:visibility="gone"
             />
 
         <Button
@@ -87,14 +84,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/searchPage"
-            android:onClick="Search"
+            android:onClick="searchStreams"
+            android:enabled="true"
+            android:visibility="gone"
             />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/uploadImageActivity"
-            android:clickable="false"
-            android:id="@+id/open_image_upload_page"/>
+
     </LinearLayout>
 </ScrollView>

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -41,20 +43,55 @@ import java.io.ByteArrayOutputStream;
 
 
 public class ImageUpload extends ActionBarActivity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener{
+    private static final String TAG = "Image Upload";
     private static final int PICK_IMAGE = 1;
+    private static final int TAKE_PHOTO = 2;
+    private static final int PRIVATE_TAKE_PHOTO = 3;
+    private String userEmail;
+
     Context context = this;
     private LocationClient currentLocation;
+    private AutoCompleteTextView streamAutoCompleteTextView;
+    String streamName;
+    private Intent currentIntent;
+    private ImageView mImageView;
+    private Bitmap bitmapImage;
+
+    private Button uploadButton;
+    private Button chooseFromLibraryButton;
+    private Button takePhotoBtn;
+    private Button takePrivatePhotoBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        currentIntent = getIntent();
+
+        streamName = currentIntent.getStringExtra("stream_name");
+        userEmail = currentIntent.getStringExtra(Consts.USER_EMAIL_NAME);
+        Log.w(TAG, "stream name is" + streamName);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_upload);
+        streamAutoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.stream_name);
+        mImageView = (ImageView) findViewById(R.id.thumbnail);
         if (servicesConnected()) {
             System.out.println("servicesConnected");
             currentLocation = new LocationClient(this, this, this);
         }
+        if (streamName != null && !streamName.isEmpty()) {
+            streamAutoCompleteTextView.setVisibility(View.GONE); //test passed 10/24 8:23pm
+        } else {
+            streamAutoCompleteTextView.setVisibility(View.VISIBLE);
+            AutocompleteAdapter mAdapter = new AutocompleteAdapter(this, android.R.layout.simple_dropdown_item_1line);
+            mAdapter.setAutocompleteAPIType(Consts.AutocompleteType.STREAM_NAME);
+            streamAutoCompleteTextView.setAdapter(mAdapter);
+        }
         // Choose image from library
-        Button chooseFromLibraryButton = (Button) findViewById(R.id.choose_from_library);
+        chooseFromLibraryButton = (Button) findViewById(R.id.choose_from_library);
+        takePhotoBtn = (Button) findViewById(R.id.take_photo);
+        takePrivatePhotoBtn = (Button) findViewById(R.id.private_take_photo);
+        uploadButton = (Button) findViewById(R.id.upload_to_server);
+        uploadButton.setVisibility(View.GONE);
+
         chooseFromLibraryButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -65,6 +102,28 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
                                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         // Start the Intent
                         startActivityForResult(galleryIntent, PICK_IMAGE);
+                    }
+                }
+        );
+
+        takePhotoBtn.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        if (takePictureIntent.resolveActivity(getPackageManager())!=null){
+                            startActivityForResult(takePictureIntent, TAKE_PHOTO);
+                        }
+                    }
+                }
+        );
+        takePrivatePhotoBtn.setOnClickListener(
+                new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v){
+                        Intent takePrivatePhotoIntent = new Intent(context, TakePhotoActivity.class);
+                        takePrivatePhotoIntent.putExtra(Consts.USER_EMAIL_NAME, userEmail);
+                        startActivityForResult(takePrivatePhotoIntent, PRIVATE_TAKE_PHOTO);
                     }
                 }
         );
@@ -98,12 +157,10 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
         //String location=mLocationClient.getLastLocation().getLatitude()+"_"+mLocationClient.getLastLocation().getLongitude();
         //System.out.println(location);
 
-        String streamName = getIntent().getStringExtra("streamName");
-        String streamID = getIntent().getStringExtra("streamID");
+    //    String streamName = getIntent().getStringExtra("streamName");
+    //    String streamID = getIntent().getStringExtra("streamID");
         //TextView responseText = (TextView) this.findViewById(R.id.stream_name_upload);
         //responseText.setText(streamName);
-
-
     }
 
     @Override
@@ -121,7 +178,6 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
         super.onStart();
         // Connect the client.
         currentLocation.connect();
-
     }
 
     /*
@@ -172,13 +228,13 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
 
             // Bitmap imaged created and show thumbnail
 
-            ImageView imgView = (ImageView) findViewById(R.id.thumbnail);
-            final Bitmap bitmapImage = BitmapFactory.decodeFile(imageFilePath);
-            imgView.setImageBitmap(bitmapImage);
+            mImageView = (ImageView) findViewById(R.id.thumbnail);
+            bitmapImage = BitmapFactory.decodeFile(imageFilePath);
+            mImageView.setImageBitmap(bitmapImage);
 
             // Enable the upload button once image has been uploaded
 
-            Button uploadButton = (Button) findViewById(R.id.upload_to_server);
+            uploadButton.setVisibility(View.VISIBLE);
             uploadButton.setClickable(true);
 
             uploadButton.setOnClickListener(
@@ -188,9 +244,6 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
 
                             // Get photo caption
 
-                            EditText text = (EditText) findViewById(R.id.stream_name);
-                            String streamName = text.getText().toString();
-
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             bitmapImage.compress(Bitmap.CompressFormat.JPEG, 50, baos);
                             byte[] b = baos.toByteArray();
@@ -199,6 +252,68 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
 
                             if(currentLocation == null)
                                     System.out.println("Location Client Invalid");
+
+                            String location = currentLocation.getLastLocation().getLatitude() + "," + currentLocation.getLastLocation().getLongitude();
+                            System.out.println(location);
+                            getUploadURL(b, streamName, location);
+                        }
+                    }
+            );
+        }
+        else if(requestCode == TAKE_PHOTO && resultCode == RESULT_OK){
+            Bundle extras = data.getExtras();
+            mImageView = (ImageView) findViewById(R.id.thumbnail);
+            bitmapImage = (Bitmap) extras.get("data");
+            mImageView.setImageBitmap(bitmapImage);
+            uploadButton.setVisibility(View.VISIBLE);
+            uploadButton.setClickable(true);
+            uploadButton.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            // Get photo caption
+
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+                            byte[] b = baos.toByteArray();
+                            byte[] encodedImage = Base64.encode(b, Base64.DEFAULT);
+                            String encodedImageStr = encodedImage.toString();
+
+                            if (currentLocation == null)
+                                System.out.println("Location Client Invalid");
+
+                            String location = currentLocation.getLastLocation().getLatitude() + "," + currentLocation.getLastLocation().getLongitude();
+                            System.out.println(location);
+                            getUploadURL(b, streamName, location);
+                        }
+                    }
+            );
+
+        } else if (requestCode == PRIVATE_TAKE_PHOTO && resultCode == RESULT_OK){
+            Log.w(TAG, "result received for private take photo");
+            Bundle extras = data.getExtras();
+            ImageView mImageView = (ImageView) findViewById(R.id.thumbnail);
+            byte[] array = (byte[]) extras.get("data");
+            bitmapImage =  BitmapFactory.decodeByteArray(array, 0, array.length);
+            mImageView.setImageBitmap(bitmapImage);
+            uploadButton.setVisibility(View.VISIBLE);
+            uploadButton.setClickable(true);
+            uploadButton.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            // Get photo caption
+
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+                            byte[] b = baos.toByteArray();
+                            byte[] encodedImage = Base64.encode(b, Base64.DEFAULT);
+                            String encodedImageStr = encodedImage.toString();
+
+                            if (currentLocation == null)
+                                System.out.println("Location Client Invalid");
 
                             String location = currentLocation.getLastLocation().getLatitude() + "," + currentLocation.getLastLocation().getLongitude();
                             System.out.println(location);
@@ -250,6 +365,7 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 Log.w("async", "success!!!!");
                 Toast.makeText(context, "Upload Successful", Toast.LENGTH_SHORT).show();
+                finish();
             }
 
             @Override
@@ -260,10 +376,13 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
     }
 
 
-
-    public void viewAllImages(View view){
-        Intent intent= new Intent(this, DisplayImages.class);
-
-        startActivity(intent);
+    @Override
+    public void onPause(){
+        // recycle to save memory
+        super.onPause();
+        mImageView.setImageBitmap(null);
+        if (bitmapImage != null){
+            bitmapImage.recycle();
+        }
     }
 }

@@ -17,6 +17,8 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -36,6 +38,7 @@ public class Homepage extends ActionBarActivity implements
     private static final int RC_SIGN_IN = 0;
 
     private static final String SAVED_PROGRESS = "sign_in_progress";
+    private String userEmail;
 
     // GoogleApiClient wraps our service connection to Google Play services and
     // provides access to the users sign in state and Google's APIs.
@@ -80,6 +83,10 @@ public class Homepage extends ActionBarActivity implements
     private SignInButton mSignInButton;
     private Button mSignOutButton;
     private Button mRevokeButton;
+
+    private Button mAllStreamBtn;
+    private Button mNearbyStreamBtn;
+    private Button mSearchBtn;
     private TextView mStatus;
 
     Context context = this;
@@ -92,6 +99,10 @@ public class Homepage extends ActionBarActivity implements
         mSignOutButton = (Button) findViewById(R.id.sign_out_button);
         mRevokeButton = (Button) findViewById(R.id.revoke_access_button);
         mStatus = (TextView) findViewById(R.id.sign_in_status);
+
+        mAllStreamBtn = (Button) findViewById(R.id.view_all_streams);
+        mNearbyStreamBtn = (Button) findViewById(R.id.view_nearby_streams);
+        mSearchBtn = (Button) findViewById(R.id.search_btn);
 
         setGooglePlusButtonText(mSignInButton, "Sign in          ");
 
@@ -224,8 +235,15 @@ public class Homepage extends ActionBarActivity implements
 
         // Update the user interface to reflect that the user is signed in.
         mSignInButton.setEnabled(false);
+        mSignInButton.setVisibility(View.GONE);
         mSignOutButton.setEnabled(true);
+        mSignOutButton.setVisibility(View.VISIBLE);
         mRevokeButton.setEnabled(true);
+        mRevokeButton.setVisibility(View.VISIBLE);
+
+        mAllStreamBtn.setEnabled(true);
+        mNearbyStreamBtn.setEnabled(true);
+        mSearchBtn.setEnabled(true);
 
         // Retrieve some profile information to personalize our app for the user.
         final Person currentUser = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
@@ -236,19 +254,13 @@ public class Homepage extends ActionBarActivity implements
 
 
         mStatus.setText(email + " is currently Signed In");
-
-        Button uploadButton = (Button) findViewById(R.id.open_image_upload_page);
-        uploadButton.setClickable(true);
-
-        uploadButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent= new Intent(context, ImageUpload.class);
-                        startActivity(intent);
-                    }
-                }
-        );
+        userEmail = email.toString();
+        System.out.println(email);
+        //TODO: check whether this is correct
+        Intent viewAllStreamIntent = new Intent(context, ViewAllStream.class);
+        viewAllStreamIntent.putExtra(Consts.USER_EMAIL_NAME, userEmail);
+        startActivity(viewAllStreamIntent);
+        //TODO: should we use finish() here?
     }
 
     /* onConnectionFailed is called when our Activity could not connect to Google
@@ -324,6 +336,55 @@ public class Homepage extends ActionBarActivity implements
         }
     }
 
+    /* (non-Javadoc)
+	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+	 */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // TODO Auto-generated method stub
+        menu.add(Menu.NONE, Menu.FIRST + 1, 1, "Search");
+     //   menu.add(Menu.NONE, Menu.FIRST + 6, 6, "退出");
+        menu.add(Menu.NONE, Menu.FIRST + 2, 2, "Nearby");
+        menu.add(Menu.NONE, Menu.FIRST + 3, 3, "Subscribe");
+//		menu.add(Menu.NONE, Menu.FIRST + 4, 4, "日程").setIcon(android.R.drawable.ic_menu_agenda);
+    //    menu.add(Menu.NONE, Menu.FIRST+5 , 5, "给我们提建议");
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // TODO Auto-generated method stub
+        switch (item.getItemId()) {
+            case Menu.FIRST + 1:
+            {
+                Intent intent = new Intent(this, SearchStream.class);
+                intent.putExtra("user_email", userEmail);
+                startActivity(intent);
+                finish();
+                break;
+            }
+            case Menu.FIRST + 2:
+            {
+                Intent intent = new Intent(this, ViewNearby.class);
+                intent.putExtra("user_email", userEmail);
+                startActivity(intent);
+                finish();
+                break;
+            }
+            case Menu.FIRST + 3:
+            {
+                Intent intent = new Intent(this, ViewSubscribed.class);
+                intent.putExtra("user_email", userEmail);
+                startActivity(intent);
+                finish();
+                break;
+            }
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
@@ -351,12 +412,19 @@ public class Homepage extends ActionBarActivity implements
     private void onSignedOut() {
         // Update the UI to reflect that the user is signed out.
         mSignInButton.setEnabled(true);
+        mSignInButton.setVisibility(View.VISIBLE);
         mSignOutButton.setEnabled(false);
+        mSignOutButton.setVisibility(View.GONE);
         mRevokeButton.setEnabled(false);
+        mRevokeButton.setVisibility(View.GONE);
+
+        mAllStreamBtn.setEnabled(true);
+        mNearbyStreamBtn.setEnabled(false);
+        mSearchBtn.setEnabled(true);
+        userEmail = "";
 
         mStatus.setText("Signed out");
-        Button uploadButton = (Button) findViewById(R.id.open_image_upload_page);
-        uploadButton.setClickable(false);
+
 
         if (imageView != null) {
             ((ViewGroup) imageView.getParent()).removeView(imageView);
@@ -372,18 +440,22 @@ public class Homepage extends ActionBarActivity implements
         mGoogleApiClient.connect();
     }
 
-    public void viewAllImages(View view){
-        Intent intent= new Intent(this, DisplayImages.class);
+
+    public void searchStreams(View view){
+        Intent intent = new Intent(this, SearchStream.class);
+        intent.putExtra("user_email", userEmail);
         startActivity(intent);
     }
 
     public void viewAllStreams(View view){
-        Intent intent= new Intent(this, ListStreams.class);
+        Intent intent= new Intent(this, ViewAllStream.class);
+        intent.putExtra(Consts.USER_EMAIL_NAME, userEmail);
         startActivity(intent);
     }
 
     public void viewNearStreams(View view){
-        Intent intent= new Intent(this, DisplayImages.class);
+        Intent intent= new Intent(this, ViewNearby.class);
+        intent.putExtra("user_email", userEmail);
         startActivity(intent);
     }
 
