@@ -60,7 +60,11 @@ public class ImageCaptionAdapter extends BaseAdapter {
         }
         if ((imageURLs.get(position)!=null && !imageURLs.get(position).isEmpty())) {
             Picasso.with(mContext).load(imageURLs.get(position)).into(imageView);
-            textView.setText(captions.get(position));
+            if(!captions.get(position).equals("null")) {
+                textView.setText(captions.get(position));
+            }else{
+                textView.setText("");
+            }
         }
         return convertView;
     }

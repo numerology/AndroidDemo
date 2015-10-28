@@ -48,6 +48,7 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
     private static final int TAKE_PHOTO = 2;
     private static final int PRIVATE_TAKE_PHOTO = 3;
     private String userEmail;
+    private String caption;
 
     Context context = this;
     private LocationClient currentLocation;
@@ -61,6 +62,7 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
     private Button chooseFromLibraryButton;
     private Button takePhotoBtn;
     private Button takePrivatePhotoBtn;
+    private EditText captionText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +73,7 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
         Log.w(TAG, "stream name is" + streamName);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_upload);
+        captionText= (EditText) findViewById(R.id.captionTextArea);
         streamAutoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.stream_name);
         mImageView = (ImageView) findViewById(R.id.thumbnail);
         if (servicesConnected()) {
@@ -257,7 +260,8 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
 
                             String location = currentLocation.getLastLocation().getLatitude() + "," + currentLocation.getLastLocation().getLongitude();
                             System.out.println(location);
-                            getUploadURL(b, streamName, location);
+                            caption = captionText.getText().toString();
+                            getUploadURL(b, streamName, location, caption);
                         }
                     }
             );
@@ -287,7 +291,8 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
 
                             String location = currentLocation.getLastLocation().getLatitude() + "," + currentLocation.getLastLocation().getLongitude();
                             System.out.println(location);
-                            getUploadURL(b, streamName, location);
+                            caption = captionText.getText().toString();
+                            getUploadURL(b, streamName, location, caption);
                         }
                     }
             );
@@ -319,14 +324,15 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
 
                             String location = currentLocation.getLastLocation().getLatitude() + "," + currentLocation.getLastLocation().getLongitude();
                             System.out.println(location);
-                            getUploadURL(b, streamName, location);
+                            caption = captionText.getText().toString();
+                            getUploadURL(b, streamName, location, caption);
                         }
                     }
             );
         }
     }
 
-    private void getUploadURL(final byte[] encodedImage, final String streamName, final String location){
+    private void getUploadURL(final byte[] encodedImage, final String streamName, final String location, final String caption){
         AsyncHttpClient httpClient = new AsyncHttpClient();
         String request_url="http://just-plate-107116.appspot.com/mobile/getUploadURL";
         System.out.println(request_url);
@@ -340,7 +346,7 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
                     JSONObject jObject = new JSONObject(new String(response));
 
                     upload_url = jObject.getString("upload_url");
-                    postToServer(encodedImage, streamName, upload_url, location);
+                    postToServer(encodedImage, streamName, upload_url, location, caption);
 
                 } catch (JSONException j) {
                     System.out.println("JSON Error");
@@ -354,12 +360,13 @@ public class ImageUpload extends ActionBarActivity implements GooglePlayServices
         });
     }
 
-    private void postToServer(byte[] encodedImage,String streamName, String upload_url, String location){
+    private void postToServer(byte[] encodedImage,String streamName, String upload_url, String location, String caption){
         System.out.println(upload_url);
         RequestParams params = new RequestParams();
         params.put("file",new ByteArrayInputStream(encodedImage));
         params.put("stream_name", streamName);
         params.put("geo_location", location);
+        params.put("caption", caption);
 
         AsyncHttpClient client = new AsyncHttpClient();
         client.post(upload_url, params, new AsyncHttpResponseHandler() {

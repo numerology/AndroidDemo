@@ -12,6 +12,7 @@
     <string name="nearbyPage">View Nearby Streams</string>
     <string name="searchPage">Search Streams</string>
     <string name="uploadImageActivity"> Upload a new image</string>
+    <string name="upload_hint_caption">Caption</string>
     <string name="title_activity_image_upload">ImageUpload</string>
     <string name="numOfCols">3</string>
 
