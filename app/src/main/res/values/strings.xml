@@ -53,7 +53,7 @@
 
     <!-- Search Page -->
     <string name="search_hint">Keywords</string>
-    <string name="search_info">Type in keywords and search for stream</string>
+    <string name="search_info">Type in keywords and search for streams</string>
     <string name="search_pre_page">Pre results</string>
     <string name="search_next_page">More results</string>
 
@@ -72,7 +72,8 @@
     <!--Common Strings-->
     <string name="view_all_streams">Streams</string>
     <string name="connexus_banner">Connexus!</string>
-    <string name="nearbyBanner">View Nearby Streams</string>
+    <string name="nearby_banner">View Nearby Streams</string>
+    <string name="upload_banner">Upload to Stream</string>
     <string name="image_pre_page">Pre Page</string> <!--used to turn pages for images-->
     <string name="image_next_page">More Images</string>
     <string name="search_btn">Search</string>

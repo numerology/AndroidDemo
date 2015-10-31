@@ -10,10 +10,10 @@
         android:id="@+id/nearby_streams_banner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/banner_font"
+        android:textSize="@dimen/sub_banner_font"
         android:gravity="center"
         android:textAlignment="gravity"
-        android:text="@string/nearbyBanner"/>
+        android:text="@string/nearby_banner"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -26,6 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:layout_marginTop="5dp"
             android:columnWidth="90dp"
             android:numColumns="@string/numOfCols"
             android:verticalSpacing="10dp"
@@ -36,6 +37,7 @@
             android:id="@+id/nearby_navigate"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal">
             <Button
@@ -43,7 +45,9 @@
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:text="@string/search_pre_page"
-                android:visibility="invisible"/>
+                android:textSize="@dimen/view_nearby_btn_font_size"
+                android:visibility="invisible"
+                android:background="@drawable/border_style"/>
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -52,16 +56,24 @@
                 android:id="@+id/nearby_next_page"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:text="@string/search_next_page"
-                android:visibility="invisible"/>
+                android:textSize="@dimen/view_nearby_btn_font_size"
+                android:visibility="invisible"
+                android:background="@drawable/border_style"/>
         </LinearLayout>
     </LinearLayout>
 
     <Button
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/view_all_streams"
         android:id="@id/nearby_all_streams"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="@dimen/stream_btn_font_size"
+        android:drawableLeft="@drawable/grid"
+        android:drawablePadding="10dp"
+        android:background="@drawable/border_style"/>
 
 </RelativeLayout>

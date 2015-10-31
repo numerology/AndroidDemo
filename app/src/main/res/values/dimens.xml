@@ -4,5 +4,25 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <!--Default banner font-->
     <dimen name="banner_font">40dp</dimen>
+    <dimen name="sub_banner_font">32dp</dimen>
     <dimen name="stream_name_font">20dp</dimen>
+    <dimen name="upload_btn_font_size">25dp</dimen>
+    <dimen name="upload_btn_padding">5dp</dimen>
+    <dimen name="upload_input_font_size">20dp</dimen>
+    <dimen name="upload_input_padding">5dp</dimen>
+
+    <dimen name="take_photo_btn_font_size">20dp</dimen>
+
+    <!--View All Stream page-->
+    <dimen name="view_all_stream_btn_font_size">20dp</dimen>
+    <dimen name="view_all_stream_search_box_width">200dp</dimen>
+    <!--View a Stream page-->
+    <dimen name="view_stream_btn_font_size">20dp</dimen>
+    <!--Search page-->
+    <dimen name="search_btn_font_size">20dp</dimen>
+    <dimen name="search_text_size">20dp</dimen>
+    <!--View Nearby page-->
+    <dimen name="view_nearby_btn_font_size">20dp</dimen>
+    <!--Dimen for common buttons-->
+    <dimen name="stream_btn_font_size">25dp</dimen>
 </resources>

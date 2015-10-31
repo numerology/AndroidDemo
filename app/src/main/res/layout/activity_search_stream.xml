@@ -13,25 +13,33 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/search_hint"
+        android:textSize="@dimen/search_text_size"
         android:inputType="textAutoComplete"
-        android:completionThreshold="1"/>
+        android:completionThreshold="1"
+        android:drawableLeft="@drawable/search"
+        android:background="@drawable/border_style"/>
     <Button
         android:id="@+id/search_submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/search_text"
-        android:text="@string/search_btn"/>
+        android:text="@string/search_btn"
+        android:textSize="@dimen/search_btn_font_size"
+        android:background="@drawable/border_style"/>
     <TextView
         android:id="@+id/search_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:layout_below="@id/search_submit"
-        android:textSize="18dp"
+        android:textSize="@dimen/search_text_size"
         android:text="@string/search_info"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="5dp"
         android:orientation="vertical"
         android:layout_below="@id/search_info"
         android:layout_alignParentBottom="true"
@@ -51,6 +59,7 @@
             android:id="@+id/search_navigate"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal">
             <Button
@@ -58,7 +67,9 @@
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:text="@string/search_pre_page"
-                android:visibility="invisible"/>
+                android:textSize="@dimen/search_btn_font_size"
+                android:visibility="invisible"
+                android:background="@drawable/border_style"/>
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -68,7 +79,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/search_next_page"
-                android:visibility="invisible"/>
+                android:textSize="@dimen/search_btn_font_size"
+                android:visibility="invisible"
+                android:background="@drawable/border_style"/>
         </LinearLayout>
     </LinearLayout>
 

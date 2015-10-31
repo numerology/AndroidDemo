@@ -67,6 +67,10 @@
             android:text="@string/streamPage"
             android:onClick="viewAllStreams"
             android:enabled="true"
+            android:textSize="@dimen/stream_btn_font_size"
+            android:drawableLeft="@drawable/grid"
+            android:drawablePadding="10dp"
+            android:background="@drawable/border_style"
             />
 
         <Button

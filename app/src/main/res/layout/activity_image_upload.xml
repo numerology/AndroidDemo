@@ -10,19 +10,37 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-         <Button
-            android:id="@+id/choose_from_library"
+        <TextView
+            android:id="@+id/upload_banner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/choose_from_library"
+            android:layout_margin="5dp"
+            android:textSize="@dimen/sub_banner_font"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            android:text="@string/upload_banner"/>
+         <Button
+             android:id="@+id/choose_from_library"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_margin="5dp"
+             android:padding="@dimen/upload_btn_padding"
+             android:gravity="center_vertical"
+             android:text="@string/choose_from_library"
+             android:textSize="@dimen/upload_btn_font_size"
+             android:drawableLeft="@drawable/library"
+             android:drawablePadding="10dp"
+             android:background="@android:color/transparent"
             />
 
         <Button
             android:id="@+id/take_photo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:padding="@dimen/upload_btn_padding"
             android:text="@string/take_photo"
+            android:textSize="@dimen/upload_btn_font_size"
             android:visibility="gone"
             />
 
@@ -30,11 +48,19 @@
             android:id="@+id/private_take_photo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/private_take_photo"/>
+            android:layout_margin="5dp"
+            android:padding="@dimen/upload_btn_padding"
+            android:gravity="center_vertical"
+            android:text="@string/private_take_photo"
+            android:textSize="@dimen/upload_btn_font_size"
+            android:drawableLeft="@drawable/camera"
+            android:drawablePadding="10dp"
+            android:background="@android:color/transparent"/>
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:id="@+id/thumbnail"
             android:adjustViewBounds="true"
             />
@@ -42,23 +68,40 @@
         <AutoCompleteTextView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/stream_name"
             android:layout_width="fill_parent"
-            android:layout_height="100dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:padding="@dimen/upload_input_padding"
             android:hint="@string/upload_hint"
+            android:textSize="@dimen/upload_input_font_size"
             android:inputType="textAutoComplete"
-            android:completionThreshold="1" />
+            android:completionThreshold="1"
+            android:background="@drawable/border_style"/>
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:padding="@dimen/upload_input_padding"
+            android:gravity="left"
+            android:maxLines="3"
+            android:lines="3"
             android:id="@+id/captionTextArea"
-            android:hint="@string/upload_hint_caption"/>
+            android:hint="@string/upload_hint_caption"
+            android:textSize="@dimen/upload_input_font_size"
+            android:background="@drawable/border_style"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:padding="@dimen/upload_btn_padding"
+            android:layout_gravity="center"
             android:text="@string/uploadImage"
+            android:textSize="@dimen/upload_btn_font_size"
             android:clickable="false"
             android:id="@+id/upload_to_server"
-            />
+            android:drawableLeft="@drawable/upload"
+            android:drawablePadding="10dp"
+            android:background="@android:color/transparent"/>
     </LinearLayout>
 </ScrollView>
