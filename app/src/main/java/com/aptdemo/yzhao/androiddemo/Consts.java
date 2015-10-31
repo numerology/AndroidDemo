@@ -13,17 +13,17 @@ public final class Consts {
     public static final String API_STREAM_SUBSCRIBED_URL = "http://just-plate-107116.appspot.com/mobile/stream_subscribed";
 
     public static final String VIEW_ALL_PHOTOS_URL="http://aptandroiddemo.appspot.com/viewAllPhotos"; // url used in demo
-
+    public static final String DEFAULT_COVER_URL = "http://www.clipartbest.com/cliparts/LiK/rb7/LiKrb7gnT.png";
     public static final int PHOTO_QUALITY = 25; //quality for the photo taken
 
     public static final int PICTURE_SIZE_MAX_WIDTH = 1280;
     public static final int PREVIEW_SIZE_MAX_WIDTH = 640;
 
     // Num of streams shown on one search page
-    public static final int SEARCH_STREAM_PER_PAGE = 6;
-    public static final int VIEW_A_STREAM_PER_PAGE = 6;
-    public static final int VIEW_ALL_STREAM_PER_PAGE = 6;
-    public static final int NEARBY_PER_PAGE = 6;
+    public static final int SEARCH_STREAM_PER_PAGE = 9;
+    public static final int VIEW_A_STREAM_PER_PAGE = 9;
+    public static final int VIEW_ALL_STREAM_PER_PAGE = 9;
+    public static final int NEARBY_PER_PAGE = 9;
 
     public static final String KEYWORD_NAME = "keywords"; // name of keywords for passing parameters between activities
     public static final String USER_EMAIL_NAME = "user_email";

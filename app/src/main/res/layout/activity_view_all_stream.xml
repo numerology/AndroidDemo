@@ -21,7 +21,7 @@
         android:layout_below="@id/view_all_streams_banner"
         android:layout_above="@+id/view_all_streams_buttons"
         android:columnWidth="90dp"
-        android:numColumns="4"
+        android:numColumns="@string/numOfCols"
         android:verticalSpacing="10dp"
         android:horizontalSpacing="10dp"
         android:stretchMode="columnWidth"

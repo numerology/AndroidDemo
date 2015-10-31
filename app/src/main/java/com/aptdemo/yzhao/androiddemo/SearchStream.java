@@ -119,7 +119,12 @@ public class SearchStream extends ActionBarActivity {//implements
                             numResult = jsonStreamNames.length();
                             for (int i = 0; i < jsonStreamNames.length(); i++) {
                                 streamNames.add(jsonStreamNames.get(i).toString());
-                                coverUrls.add(jsonCoverUrls.get(i).toString());
+                                if(jsonCoverUrls.getString(i).length()>1) {
+                                    coverUrls.add(jsonCoverUrls.getString(i));
+                                }else
+                                {
+                                    coverUrls.add(Consts.DEFAULT_COVER_URL);
+                                }
                                 streamIds.add(jsonStreamIds.get(i).toString());
                             }
                             StringBuilder searchInfoSb = new StringBuilder();

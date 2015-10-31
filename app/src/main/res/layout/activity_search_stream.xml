@@ -42,7 +42,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:columnWidth="90dp"
-            android:numColumns="4"
+            android:numColumns="@string/numOfCols"
             android:verticalSpacing="10dp"
             android:horizontalSpacing="10dp"
             android:stretchMode="columnWidth"

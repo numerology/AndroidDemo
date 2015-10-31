@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
@@ -43,6 +46,8 @@ public class ViewAllStream extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         setContentView(R.layout.activity_view_all_stream);
         userEmail = getIntent().getStringExtra(Consts.USER_EMAIL_NAME);
         mGridView = (GridView) findViewById(R.id.view_all_streams_gridview);
@@ -114,11 +119,15 @@ public class ViewAllStream extends ActionBarActivity {
     private void refreshGridView(){ // update streams according to showSubscribeState
         Log.d(TAG, "refreshGridView runs");
         String request_url = Consts.API_STREAM_LIST_URL;
+        RequestParams params = new RequestParams();
         if (showSubscribeState == SubscribeStream.SUBSCRIBE_STREAM){
             request_url = Consts.API_STREAM_SUBSCRIBED_URL; //TODO: send max number of stream to return ?
+            params.put("user_email", userEmail);
+            Log.d(TAG, "requesting useremail= " + userEmail);
         }
         AsyncHttpClient httpClient = new AsyncHttpClient();
-        httpClient.get(request_url, new AsyncHttpResponseHandler() {
+
+        httpClient.get(request_url, params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 Log.d(TAG, "get data from server");
@@ -133,7 +142,12 @@ public class ViewAllStream extends ActionBarActivity {
                     JSONArray jid = jObject.getJSONArray("streams_id");
                     Log.d(TAG, "jcoverUrl length: " + Integer.toString(jcoverUrl.length()));
                     for (int i = 0; i < Math.min(jcoverUrl.length(), Consts.VIEW_ALL_STREAM_PER_PAGE); i++){
-                        coverURLs.add(jcoverUrl.getString(i));
+                        if(jcoverUrl.getString(i).length()>1) {
+                            coverURLs.add(jcoverUrl.getString(i));
+                        }else
+                        {
+                            coverURLs.add(Consts.DEFAULT_COVER_URL);
+                        }
                         streamIDs.add(jid.getString(i));
                         //System.out.println("adding ID: " + jid.getString(i));
                         System.out.println("adding url: "+jcoverUrl.getString(i));

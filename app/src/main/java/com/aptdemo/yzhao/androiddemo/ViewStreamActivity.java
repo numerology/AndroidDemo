@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
@@ -46,9 +47,12 @@ public class ViewStreamActivity extends ActionBarActivity {
     String streamName;
     private String userEmail;
     private String streamID;
+    ArrayList<String> captions = new ArrayList<String>();
     ArrayList<String> imageURLs = new ArrayList<String>();
     ArrayList<String> pageImageURLs = new ArrayList<String>();
-    ImageAdapter mImageAdapter = null;
+    ArrayList<String> pageCaptions = new ArrayList<String>();
+
+    ImageCaptionAdapter mImageAdapter = null;
 
     int currentPage = 0; // current page of results shown
     int totalPage = 0;
@@ -56,6 +60,10 @@ public class ViewStreamActivity extends ActionBarActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+
+
         setContentView(R.layout.activity_view_stream);
 
         uploadBtn = (Button) findViewById(R.id.open_image_upload_page);
@@ -100,9 +108,11 @@ public class ViewStreamActivity extends ActionBarActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 imageURLs.clear(); // forgot to clear 10/26/2015
+                captions.clear();
                 try {
                     JSONObject jObject = new JSONObject(new String(response));
                     JSONArray imgUrl = jObject.getJSONArray("image_url");
+                    JSONArray jcaptions = jObject.getJSONArray("captions");
                     Log.d(TAG, "received image number is: " + Integer.toString(imgUrl.length()));
                     streamName = jObject.getString("stream_name");
                     setStreamName();
@@ -123,6 +133,7 @@ public class ViewStreamActivity extends ActionBarActivity {
 
                     for (int i = 0; i < imgUrl.length(); i++) {
                         imageURLs.add(imgUrl.getString(i));
+                        captions.add(jcaptions.getString(i));
                     }
 
                     currentPage = 1;
@@ -146,6 +157,7 @@ public class ViewStreamActivity extends ActionBarActivity {
         if (totalPage == 0){
             Log.w(TAG, "total page is zero");
             pageImageURLs.clear();
+            pageCaptions.clear();
             if (mImageAdapter != null){
                 mImageAdapter.notifyDataSetChanged();
             }
@@ -176,13 +188,15 @@ public class ViewStreamActivity extends ActionBarActivity {
             }
         }
         pageImageURLs.clear();
+        pageCaptions.clear();
         int startStreamNum = (page - 1)*IMAGE_PER_PAGE;
         int endStreamNum = (int) Math.min(page*IMAGE_PER_PAGE, imageURLs.size());
         for (int i = startStreamNum; i < endStreamNum ; i++){
             pageImageURLs.add(imageURLs.get(i));
+            pageCaptions.add(captions.get(i));
         }
         if (mImageAdapter == null){
-            mImageAdapter = new ImageAdapter(context, pageImageURLs);
+            mImageAdapter = new ImageCaptionAdapter(context, pageImageURLs, pageCaptions);
         }else{
             mImageAdapter.notifyDataSetChanged();
         }
